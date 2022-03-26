@@ -12,7 +12,7 @@
                 ></v-img>
             </v-list-item-avatar>
 
-            <v-list-item-title>Test</v-list-item-title>
+            <v-list-item-title>Admin</v-list-item-title>
 
             <v-btn icon @click.stop="mini = !mini">
                 <v-icon>mdi-chevron-left</v-icon>
@@ -42,6 +42,7 @@ export default {
         return {
             drawer: true,
             items: [
+                { title: "Dashboard", icon: "mdi-view-dashboard", to: '/'},
                 { title: "Parcels", icon: "mdi-cart", to: '/admin/parcels'},
                 { title: "Deliveries", icon: "mdi-motorbike", to: '/admin/deliveries' },
                 // { title: "Users", icon: "mdi-account-group-outline" },
