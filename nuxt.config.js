@@ -106,7 +106,7 @@ export default {
         light: {
           primary: '#499f6e',
           accent: '#71DFE7',
-          secondary: colors.amber.darken3,
+          secondary: '#71DFE7',
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
