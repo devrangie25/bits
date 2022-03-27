@@ -63,8 +63,8 @@ export default {
                     title: "Drop Off",
                 },
                 {
-                    icon: "mdi-truck",
-                    title: "Delivery",
+                    icon: "mdi-map-marker",
+                    title: "Branches",
                 },
             ],
             pieData: {
