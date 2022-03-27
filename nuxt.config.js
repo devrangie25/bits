@@ -24,10 +24,12 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    '@/assets/style.css',
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    {src: '~/plugins/chart.js', mode: 'client'}
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -57,9 +59,12 @@ export default {
 
   googleFonts: {
     families: {
-      Bangers: [600, 800, 900]
-    }
-  },
+        Roboto: false,
+        Karla: true,
+        Rubik: true,
+    },
+    display: 'swap'
+},
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
@@ -85,6 +90,7 @@ export default {
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    treeshake: true,
     theme: {
       dark: false,
       themes: {
@@ -98,8 +104,8 @@ export default {
           success: colors.green.accent3
         },
         light: {
-          primary: colors.blue.darken2,
-          accent: colors.grey.darken3,
+          primary: '#499f6e',
+          accent: '#71DFE7',
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,
           warning: colors.amber.base,

@@ -3,32 +3,41 @@
         app
         v-model="drawer"
         :mini-variant.sync="mini"
+        mini-variant-width="80"
         permanent
+        color="primary"
     >
-        <v-list-item class="px-2">
+        <v-list-item class="px-4">
             <v-list-item-avatar>
                 <v-img
                     src="https://randomuser.me/api/portraits/men/85.jpg"
                 ></v-img>
             </v-list-item-avatar>
 
-            <v-list-item-title>Admin</v-list-item-title>
+            <v-list-item-title class="white--text">Admin</v-list-item-title>
 
-            <v-btn icon @click.stop="mini = !mini">
+            <v-btn dark icon @click.stop="mini = !mini">
                 <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
         </v-list-item>
 
-        <v-divider></v-divider>
-
-        <v-list dense>
-            <v-list-item v-for="item in items" :key="item.title" :to="item.to">
+        <v-list rounded>
+            <v-list-item
+                color="white"
+                ripple
+                link
+                v-for="item in items"
+                :key="item.title"
+                :to="item.to"
+            >
                 <v-list-item-icon>
-                    <v-icon>{{ item.icon }}</v-icon>
+                    <v-icon dark>{{ item.icon }}</v-icon>
                 </v-list-item-icon>
 
                 <v-list-item-content>
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    <v-list-item-title class="white--text">{{
+                        item.title
+                    }}</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
         </v-list>
@@ -42,10 +51,18 @@ export default {
         return {
             drawer: true,
             items: [
-                { title: "Dashboard", icon: "mdi-view-dashboard", to: '/'},
-                { title: "Parcels", icon: "mdi-cart", to: '/admin/parcels'},
-                { title: "Deliveries", icon: "mdi-motorbike", to: '/admin/deliveries' },
-                // { title: "Users", icon: "mdi-account-group-outline" },
+                { title: "Dashboard", icon: "mdi-view-dashboard", to: "/" },
+                { title: "Parcels", icon: "mdi-cart", to: "/admin/parcels" },
+                {
+                    title: "Deliveries",
+                    icon: "mdi-truck",
+                    to: "/admin/deliveries",
+                },
+                {
+                    title: "Branches",
+                    icon: "mdi-map-marker",
+                    to: "/admin/branches",
+                },
             ],
             mini: true,
         };

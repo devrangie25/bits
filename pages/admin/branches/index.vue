@@ -12,7 +12,7 @@
                         >
                             <template v-slot:top>
                                 <v-toolbar flat rounded="lg">
-                                    <v-toolbar-title>Parcels</v-toolbar-title>
+                                    <v-toolbar-title>Branches</v-toolbar-title>
                                     <v-dialog
                                         v-model="dialog"
                                         max-width="500px"
