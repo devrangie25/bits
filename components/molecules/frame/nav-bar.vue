@@ -4,14 +4,15 @@
         v-model="drawer"
         :mini-variant.sync="mini"
         mini-variant-width="80"
-        permanent
+        :permanent="!isMobileOrTable"
+        :temporary="isMobileOrTable"
         color="primary"
     >
         <v-list-item class="px-4">
             <v-list-item-avatar>
-                <v-img
-                    src="https://randomuser.me/api/portraits/men/85.jpg"
-                ></v-img>
+                <v-icon large color="white">
+                    mdi-account-circle
+                </v-icon>
             </v-list-item-avatar>
 
             <v-list-item-title class="white--text">Admin</v-list-item-title>
@@ -54,9 +55,9 @@ export default {
                 { title: "Dashboard", icon: "mdi-view-dashboard", to: "/" },
                 { title: "Parcels", icon: "mdi-cart", to: "/admin/parcels" },
                 {
-                    title: "Deliveries",
-                    icon: "mdi-truck",
-                    to: "/admin/deliveries",
+                    title: "Products",
+                    icon: "mdi-briefcase",
+                    to: "/admin/product-information",
                 },
                 {
                     title: "Branches",
@@ -67,5 +68,25 @@ export default {
             mini: true,
         };
     },
+
+    computed: {
+        isMobileOrTable(){
+            if (this.$vuetify.breakpoint.mdAndDown) {
+                return true
+            }
+            return false
+        }
+    },
+
+    created(){
+        this.$nuxt.$on('show', bol => {
+            console.log('bol')
+            this.drawer = true
+        })
+    },
+
+    beforeDestroy(){
+        this.$nuxt.$off('show')
+    }
 };
 </script>

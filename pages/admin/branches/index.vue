@@ -132,7 +132,7 @@
                                     <v-text-field
                                         v-model="search"
                                         append-icon="mdi-magnify"
-                                        label="Search Parcel"
+                                        label="Search Branch"
                                         outlined
                                         dense
                                         single-line
@@ -205,29 +205,27 @@ export default {
         dialogDelete: false,
         headers: [
             {
-                text: "Item",
+                text: "Name",
                 value: "name",
             },
-            { text: "Size", value: "carbs" },
-            { text: "Color", value: "carbs" },
-            { text: "Type", value: "protein" },
+            { text: "Municipality", value: "municipality" },
+            { text: "Zip Code", value: "zipcode" },
+            { text: "Contact #", value: "contact" },
             { text: "Actions", value: "actions", sortable: false },
         ],
         parcels: [],
         editedIndex: -1,
         editedItem: {
             name: "",
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0,
+            municipality: 0,
+            zipcode: 0,
+            contact: 0,
         },
         defaultItem: {
             name: "",
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0,
+            municipality: 0,
+            zipcode: 0,
+            contact: 0,
         },
     }),
 
@@ -254,18 +252,16 @@ export default {
         initialize() {
             this.parcels = [
                 {
-                    name: "Frozen Yogurt",
-                    calories: 159,
-                    fat: 6.0,
-                    carbs: 24,
-                    protein: 4.0,
+                    name: "Jessamae Trucking Services",
+                    municipality: 'Cebu City',
+                    zipcode: '6000',
+                    contact: '09123456778'
                 },
                 {
-                    name: "Ice cream sandwich",
-                    calories: 237,
-                    fat: 9.0,
-                    carbs: 37,
-                    protein: 4.3,
+                    name: "3G Trucking",
+                    municipality: 'Cebu City',
+                    zipcode: '6000',
+                    contact: '09123456778'
                 },
             ];
         },

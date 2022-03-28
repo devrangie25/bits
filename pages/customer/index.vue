@@ -23,7 +23,7 @@
                     <div
                         class="my-4 mb-8 title ml-10 d-flex justify-space-between"
                     >
-                        <span> Tracking Number </span>
+                        <span class="font-weight-light"> Tracking Number </span>
                         <span class="font-weight-bold">
                             PH29127408211
                             <v-icon class="ml-2 mt-n1 copy-icon">

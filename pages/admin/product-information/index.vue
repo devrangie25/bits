@@ -12,7 +12,7 @@
                         >
                             <template v-slot:top>
                                 <v-toolbar flat rounded="lg">
-                                    <v-toolbar-title>Parcels</v-toolbar-title>
+                                    <v-toolbar-title>Products</v-toolbar-title>
                                     <v-dialog
                                         v-model="dialog"
                                         max-width="500px"
@@ -132,7 +132,7 @@
                                     <v-text-field
                                         v-model="search"
                                         append-icon="mdi-magnify"
-                                        label="Search Parcel"
+                                        label="Search Product"
                                         outlined
                                         dense
                                         single-line
@@ -178,11 +178,7 @@
                                 >
                                     mdi-pencil
                                 </v-icon>
-                                <v-icon
-                                    color="red"
-                                    small
-                                    @click="deleteItem(item)"
-                                >
+                                <v-icon color="red" small @click="deleteItem(item)">
                                     mdi-delete
                                 </v-icon>
                             </template>
@@ -209,16 +205,12 @@ export default {
         dialogDelete: false,
         headers: [
             {
-                text: "Tracking ID",
-                value: "trucking_id",
+                text: "Item",
+                value: "product",
             },
-            {
-                text: "Shipped Date",
-                value: "shipped_date",
-            },
-            { text: "Sender", value: "sender" },
-            { text: "Recipient", value: "recipient" },
-            { text: "Status", value: "status" },
+            { text: "Type", value: "type" },
+            { text: "Size", value: "size" },
+            { text: "Shipping Fee", value: "shipping_fee" },
             { text: "Actions", value: "actions", sortable: false },
         ],
         parcels: [],
@@ -262,18 +254,16 @@ export default {
         initialize() {
             this.parcels = [
                 {
-                    trucking_id: "Frozen Yogurt",
-                    shipped_date: "March 20, 2022",
-                    sender: "Paul Walker",
-                    recipient: "Vin Diesel",
-                    status: "Order Created",
+                    product: 'TV',
+                    type: 'Fragile',
+                    size: '10kg',
+                    shipping_fee: '200'
                 },
                 {
-                    trucking_id: "Frozen Yogurt",
-                    shipped_date: "March 20, 2022",
-                    sender: "John Doe",
-                    recipient: "John Dave",
-                    status: "Received",
+                    product: 'Washing Machine',
+                    type: 'Fragile',
+                    size: '5kg',
+                    shipping_fee: '300'
                 },
             ];
         },

@@ -54,17 +54,17 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
-    '@nuxtjs/google-fonts'
+    // '@nuxtjs/google-fonts'
   ],
 
-  googleFonts: {
-    families: {
-        Roboto: false,
-        Karla: true,
-        Rubik: true,
-    },
-    display: 'swap'
-},
+//   googleFonts: {
+//     families: {
+//         Roboto: false,
+//         Karla: true,
+//         Rubik: true,
+//     },
+//     display: 'swap'
+// },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [

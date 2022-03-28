@@ -12,7 +12,7 @@
                         >
                             <template v-slot:top>
                                 <v-toolbar flat rounded="lg">
-                                    <v-toolbar-title>Parcels</v-toolbar-title>
+                                    <v-toolbar-title>Trucking Information</v-toolbar-title>
                                     <v-dialog
                                         v-model="dialog"
                                         max-width="500px"
@@ -178,11 +178,7 @@
                                 >
                                     mdi-pencil
                                 </v-icon>
-                                <v-icon
-                                    color="red"
-                                    small
-                                    @click="deleteItem(item)"
-                                >
+                                <v-icon color="red" small @click="deleteItem(item)">
                                     mdi-delete
                                 </v-icon>
                             </template>
@@ -209,16 +205,12 @@ export default {
         dialogDelete: false,
         headers: [
             {
-                text: "Tracking ID",
-                value: "trucking_id",
+                text: "Item",
+                value: "name",
             },
-            {
-                text: "Shipped Date",
-                value: "shipped_date",
-            },
-            { text: "Sender", value: "sender" },
-            { text: "Recipient", value: "recipient" },
-            { text: "Status", value: "status" },
+            { text: "Size", value: "carbs" },
+            { text: "Color", value: "carbs" },
+            { text: "Type", value: "protein" },
             { text: "Actions", value: "actions", sortable: false },
         ],
         parcels: [],
@@ -262,18 +254,18 @@ export default {
         initialize() {
             this.parcels = [
                 {
-                    trucking_id: "Frozen Yogurt",
-                    shipped_date: "March 20, 2022",
-                    sender: "Paul Walker",
-                    recipient: "Vin Diesel",
-                    status: "Order Created",
+                    name: "Frozen Yogurt",
+                    calories: 159,
+                    fat: 6.0,
+                    carbs: 24,
+                    protein: 4.0,
                 },
                 {
-                    trucking_id: "Frozen Yogurt",
-                    shipped_date: "March 20, 2022",
-                    sender: "John Doe",
-                    recipient: "John Dave",
-                    status: "Received",
+                    name: "Ice cream sandwich",
+                    calories: 237,
+                    fat: 9.0,
+                    carbs: 37,
+                    protein: 4.3,
                 },
             ];
         },
