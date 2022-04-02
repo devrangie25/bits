@@ -22,31 +22,31 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col cols="12">
+            <v-col cols="12" md="6">
                 <div class="line">
                     <v-card flat class="pa-4">
                         <client-only>
                             <line-chart
-                                :height="150"
+                                :height="320"
                                 :data="chartData"
                             ></line-chart>
                         </client-only>
                     </v-card>
                 </div>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col  cols="12" md="6">
                 <div class="pie">
                     <v-card flat class="pa-4" rounded="lg">
                         <client-only>
                             <pie-chart
-                                :height="350"
+                                :height="320"
                                 :data="pieData"
                             ></pie-chart>
                         </client-only>
                     </v-card>
                 </div>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col v-if="false" cols="12" md="6">
                 <div class="pie">
                     <v-card flat class="pa-4" rounded="lg">
                         <client-only>
@@ -115,11 +115,11 @@ export default {
                     "Parcels",
                     "Order Created",
                     "Items Shipped",
-                    "Accepted by Courier",
+                    "Accepted",
                     "Pick Up",
                     "Delivered",
                     "Drop Off",
-                    "Unsuccessful",
+                    "Failed",
                 ],
                 datasets: [
                     {
@@ -143,11 +143,11 @@ export default {
                     "Parcels",
                     "Order Created",
                     "Items Shipped",
-                    "Accepted by Courier",
+                    "Accepted",
                     "Pick Up",
                     "Delivered",
                     "Drop Off",
-                    "Unsuccessful",
+                    "Failed",
                 ],
                 datasets: [
                     {

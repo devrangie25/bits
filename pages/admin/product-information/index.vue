@@ -2,129 +2,27 @@
     <div>
         <div class="parcel-container">
             <v-row>
-                <v-col cols="12">
+                <v-col cols="12" v-if="page === 1">
                     <v-card class="pa-6" rounded="lg" flat>
                         <v-data-table
                             :headers="headers"
-                            :items="parcels"
+                            :items="products"
                             sort-by="calories"
                             class="transparent rounded-lg"
                         >
                             <template v-slot:top>
                                 <v-toolbar flat rounded="lg">
                                     <v-toolbar-title>Products</v-toolbar-title>
-                                    <v-dialog
-                                        v-model="dialog"
-                                        max-width="500px"
+                                    <v-btn
+                                        class="ml-2"
+                                        x-small
+                                        depressed
+                                        fab
+                                        color="primary"
+                                        @click="addParcelForm"
                                     >
-                                        <template
-                                            v-slot:activator="{ on, attrs }"
-                                        >
-                                            <v-btn
-                                                class="ml-2"
-                                                x-small
-                                                depressed
-                                                fab
-                                                color="primary"
-                                                v-bind="attrs"
-                                                v-on="on"
-                                            >
-                                                <v-icon> mdi-plus </v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <v-card>
-                                            <v-card-title>
-                                                <span class="text-h5">{{
-                                                    formTitle
-                                                }}</span>
-                                            </v-card-title>
-
-                                            <v-card-text>
-                                                <v-container>
-                                                    <v-row>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.name
-                                                                "
-                                                                label="Dessert name"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.calories
-                                                                "
-                                                                label="Calories"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.fat
-                                                                "
-                                                                label="Fat (g)"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.carbs
-                                                                "
-                                                                label="Carbs (g)"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.protein
-                                                                "
-                                                                label="Protein (g)"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                </v-container>
-                                            </v-card-text>
-
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="close"
-                                                >
-                                                    Cancel
-                                                </v-btn>
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="save"
-                                                >
-                                                    Save
-                                                </v-btn>
-                                            </v-card-actions>
-                                        </v-card>
-                                    </v-dialog>
+                                        <v-icon> mdi-plus </v-icon>
+                                    </v-btn>
                                     <v-spacer
                                         v-for="i in 6"
                                         :key="i"
@@ -139,56 +37,31 @@
                                         hide-details
                                         class="mr-n4"
                                     ></v-text-field>
-
-                                    <v-dialog
-                                        v-model="dialogDelete"
-                                        max-width="500px"
-                                    >
-                                        <v-card>
-                                            <v-card-title class="text-h5"
-                                                >Are you sure you want to delete
-                                                this item?</v-card-title
-                                            >
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="closeDelete"
-                                                    >Cancel</v-btn
-                                                >
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="deleteItemConfirm"
-                                                    >OK</v-btn
-                                                >
-                                                <v-spacer></v-spacer>
-                                            </v-card-actions>
-                                        </v-card>
-                                    </v-dialog>
                                 </v-toolbar>
                             </template>
                             <template v-slot:item.actions="{ item }">
                                 <v-icon
                                     small
                                     class="mr-2"
-                                    @click="editItem(item)"
                                     color="orange"
                                 >
                                     mdi-pencil
                                 </v-icon>
-                                <v-icon color="red" small @click="deleteItem(item)">
+                                <v-icon
+                                    color="red"
+                                    small
+                                >
                                     mdi-delete
                                 </v-icon>
                             </template>
-                            <template v-slot:no-data>
-                                <v-btn color="primary" @click="initialize">
-                                    Reset
-                                </v-btn>
-                            </template>
                         </v-data-table>
                     </v-card>
+                </v-col>
+                <v-col cols="12" v-if="page === 2">
+                    <bt-m-form-product
+                        @cancel-product="cancelParcel"
+                        @save-product="saveParcel"
+                    />
                 </v-col>
             </v-row>
         </div>
@@ -200,9 +73,8 @@ export default {
     layout: "loggedin",
 
     data: () => ({
+        page: 1,
         search: "",
-        dialog: false,
-        dialogDelete: false,
         headers: [
             {
                 text: "Item",
@@ -213,104 +85,28 @@ export default {
             { text: "Shipping Fee", value: "shipping_fee" },
             { text: "Actions", value: "actions", sortable: false },
         ],
-        parcels: [],
-        editedIndex: -1,
-        editedItem: {
-            name: "",
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0,
-        },
-        defaultItem: {
-            name: "",
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0,
-        },
+        products: []
     }),
 
-    computed: {
-        formTitle() {
-            return this.editedIndex === -1 ? "New Item" : "Edit Item";
-        },
-    },
-
-    watch: {
-        dialog(val) {
-            val || this.close();
-        },
-        dialogDelete(val) {
-            val || this.closeDelete();
-        },
-    },
-
-    created() {
-        this.initialize();
-    },
-
     methods: {
-        initialize() {
-            this.parcels = [
-                {
-                    product: 'TV',
-                    type: 'Fragile',
-                    size: '10kg',
-                    shipping_fee: '200'
-                },
-                {
-                    product: 'Washing Machine',
-                    type: 'Fragile',
-                    size: '5kg',
-                    shipping_fee: '300'
-                },
-            ];
+        cancelParcel() {
+            this.page = 1;
         },
 
-        editItem(item) {
-            this.editedIndex = this.parcels.indexOf(item);
-            this.editedItem = Object.assign({}, item);
-            this.dialog = true;
-        },
-
-        deleteItem(item) {
-            this.editedIndex = this.parcels.indexOf(item);
-            this.editedItem = Object.assign({}, item);
-            this.dialogDelete = true;
-        },
-
-        deleteItemConfirm() {
-            this.parcels.splice(this.editedIndex, 1);
-            this.closeDelete();
-        },
-
-        close() {
-            this.dialog = false;
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem);
-                this.editedIndex = -1;
+        saveParcel() {
+            this.page = 1;
+            this.$swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Product Successfully Added.",
+                showConfirmButton: false,
+                timer: 1500,
             });
         },
 
-        closeDelete() {
-            this.dialogDelete = false;
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem);
-                this.editedIndex = -1;
-            });
-        },
-
-        save() {
-            if (this.editedIndex > -1) {
-                Object.assign(this.parcels[this.editedIndex], this.editedItem);
-            } else {
-                this.parcels.push(this.editedItem);
-            }
-            this.close();
-        },
+        addParcelForm() {
+            this.page = 2;
+        }
     },
 };
 </script>
-
-<style></style>
