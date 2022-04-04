@@ -1,10 +1,12 @@
 <template>
-    <div>About us</div>
+    <div>
+        <bt-m-paragraphs-about />
+    </div>
 </template>
 
 <script>
 export default {
     name: "aboutUs",
-    layout: 'loggedin'
+    layout: "loggedin"
 };
 </script>

@@ -2,7 +2,7 @@
     <div>
         <v-row class="pa-0">
             <v-col cols="12" class="tracker-field-con py-16">
-                <div v-if="!$vuetify.breakpoint.mdAndDown" style="float: left;">
+                <div v-if="!$vuetify.breakpoint.mdAndDown" style="float: left">
                     <v-img src="/img/bits-logo.png" width="200"></v-img>
                 </div>
                 <v-container style="max-width: 800px">
@@ -23,6 +23,18 @@
                     >
                     </v-text-field>
                 </v-container>
+            </v-col>
+
+            <v-col v-if="false" cols="12" class="mt-16 d-flex justify-center">
+                <div>
+                    <div class="d-flex justify-center">
+                        <v-img
+                            src="/img/parcel-not-found.png"
+                            :width="$vuetify.breakpoint.mdAndDown ? 50 : 100"
+                        ></v-img>
+                    </div>
+                    <div :class="`mt-6 ${$vuetify.breakpoint.mdAndDown ? 'title' : 'display-1'}`">Parcel Not Found</div>
+                </div>
             </v-col>
 
             <v-col v-if="isSearch" cols="12">
@@ -84,6 +96,9 @@
                         </v-timeline-item>
                     </v-timeline>
                 </v-container>
+            </v-col>
+            <v-col cols="12">
+                <bt-m-paragraphs-about color="transparent" />
             </v-col>
         </v-row>
     </div>

@@ -91,8 +91,8 @@ export default {
                 text: "Shipped Date",
                 value: "shipped_date",
             },
-            { text: "Sender", value: "sender" },
-            { text: "Recipient", value: "recipient" },
+            { text: "Sender", value: "sender_name" },
+            { text: "Recipient", value: "receiver_name" },
             { text: "Status", value: "status" },
             { text: "Actions", value: "actions", sortable: false },
         ],
@@ -100,15 +100,23 @@ export default {
             {
                 trucking_id: "PH2085659125",
                 shipped_date: "09/25/2022",
-                sender: "Rangie Laurente",
-                recipient: "Jose Rizal",
+                sender_name: "Rangie Laurente",
+                sender_address: "Poblacion, Madridejos, Cebu",
+                sender_contact: "09123856245",
+                receiver_name: "Kyla Jean",
+                receiver_address: "Mancilang, Madridejos, Cebu",
+                receiver_contact: "09387172840",
                 status: "Pick Up",
             },
             {
-                trucking_id: "PH2085323562",
-                shipped_date: "02/12/2022",
-                sender: "Maria Magdalena",
-                recipient: "Pablo Escobar",
+                trucking_id: "PH2085612345",
+                shipped_date: "09/25/2022",
+                sender_name: "John Doe",
+                sender_address: "Poblacion, Madridejos, Cebu",
+                sender_contact: "09123856245",
+                receiver_name: "Jose Rizal",
+                receiver_address: "Tugas, Madridejos, Cebu",
+                receiver_contact: "09376591624",
                 status: "Delivered",
             },
         ],
@@ -119,6 +127,7 @@ export default {
     methods: {
         cancelParcel() {
             this.page = 1;
+            this.formData = {}
         },
 
         saveParcel(newParcel) {

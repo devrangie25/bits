@@ -24,7 +24,7 @@
                         <v-row>
                             <v-col cols="12" sm="6" md="6">
                                 <v-text-field
-                                    v-model="parcel.sender"
+                                    v-model="parcel.sender_name"
                                     outlined
                                     label="Full Name"
                                     dense
@@ -33,6 +33,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-text-field
+                                    v-model="parcel.sender_address"
                                     outlined
                                     label="Address"
                                     dense
@@ -41,6 +42,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-text-field
+                                    v-model="parcel.sender_contact"
                                     outlined
                                     label="Contact Number"
                                     dense
@@ -54,7 +56,7 @@
                         <v-row>
                             <v-col cols="12" sm="6" md="6">
                                 <v-text-field
-                                    v-model="parcel.recipient"
+                                    v-model="parcel.receiver_name"
                                     outlined
                                     label="Full Name"
                                     dense
@@ -63,6 +65,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-text-field
+                                    v-model="parcel.receiver_address"
                                     outlined
                                     label="Address"
                                     dense
@@ -71,6 +74,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-text-field
+                                    v-model="parcel.receiver_contact"
                                     outlined
                                     label="Contact Number"
                                     dense
@@ -213,7 +217,8 @@ export default {
 
         save() {
             console.log('Parcel', this.parcel)
-            this.$emit("save-parcel", this.parcel);
+            const today = new Date();
+            this.$emit("save-parcel", {...this.parcel, trucking_id : `PH208565912${Math.floor(Math.random() * 10)}`, status: 'Order Created', shipped_date: today.toLocaleDateString("en-US")});
         },
     },
 };
