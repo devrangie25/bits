@@ -73,7 +73,7 @@ export default {
         return {
             drawer: true,
             items: [
-                { title: "Dashboard", icon: "mdi-view-dashboard", to: "/" },
+                { title: "Dashboard", icon: "mdi-view-dashboard", to: "/admin/dashboard" },
                 { title: "Parcels", icon: "mdi-cart", to: "/admin/parcels" },
                 {
                     title: "Products",

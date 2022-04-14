@@ -7,7 +7,7 @@
                 </div>
             </v-col>
             <v-col cols="12" lg="5" class="col-2-center-form">
-                <bt-m-auth-form :formData="formData" title="Login" @login-user="loginUser"/>
+                <bt-m-auth-form :formData="formData" title="Reset Password" @reset-password="resetPassword"/>
             </v-col>
         </v-row>
     </div>
@@ -21,12 +21,28 @@ export default {
         return {
             formData: {
                 email: '',
-                password: ''
+                password: '',
+                confirmPassword: ''
             }
         }
     },
 
     methods: {
+
+        async resetPassword(userData){
+             try {
+                const user = await this.$store.dispatch('auth/resetPassword', userData)
+                if (!user.error) {
+                    await this.showParcelNotification({ icon : 'success', title: 'Successfully Reset' })
+                    this.$router.push("/auth/login");
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error.message)
+            }
+        },
+
         showParcelNotification({ position, icon, title, showConfirmButton, time}){
             return this.$swal.fire({
                 position: position || 'success',
@@ -36,20 +52,6 @@ export default {
                 timer: time || 1500,
             });
         },
-
-        async loginUser(userData){
-            try {
-                const user = await this.$store.dispatch('auth/loginUser', userData)
-                if (!user.error) {
-                    await this.$router.push("/admin/dashboard");
-                    await this.showParcelNotification({ icon : 'success', title: 'Successfully Login' })
-                } else {
-                    await this.showParcelNotification({ icon : 'error', title: 'User Not Foud' })
-                }
-            } catch (error) {
-                console.error('error', error.message)
-            }
-        }
     }
 };
 </script>

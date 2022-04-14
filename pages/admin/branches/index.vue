@@ -6,9 +6,10 @@
                     <v-card class="pa-6" rounded="lg" flat>
                         <v-data-table
                             :headers="headers"
-                            :items="branches"
+                            :items="storeBranches"
                             sort-by="calories"
                             class="transparent rounded-lg"
+                            :search="search"
                         >
                             <template v-slot:top>
                                 <v-toolbar flat rounded="lg">
@@ -19,7 +20,7 @@
                                         depressed
                                         fab
                                         color="primary"
-                                        @click="addParcelForm"
+                                        @click="addBranchForm"
                                     >
                                         <v-icon> mdi-plus </v-icon>
                                     </v-btn>
@@ -44,12 +45,14 @@
                                     small
                                     class="mr-2"
                                     color="orange"
+                                    @click="editBranch(item)"
                                 >
                                     mdi-pencil
                                 </v-icon>
                                 <v-icon
                                     color="red"
                                     small
+                                    @click="deleteBranch(item)"
                                 >
                                     mdi-delete
                                 </v-icon>
@@ -59,8 +62,11 @@
                 </v-col>
                 <v-col cols="12" v-if="page === 2">
                     <bt-m-form-branch
-                        @cancel-parcel="cancelParcel"
-                        @save-parcel="saveParcel"
+                        :formData="formData"
+                        :action="action"
+                        @cancel-branch="cancelBranch"
+                        @save-branch="addNewBranch"
+                        @update-branch="updateBranch"
                     />
                 </v-col>
             </v-row>
@@ -71,7 +77,7 @@
 <script>
 export default {
     layout: "loggedin",
-
+    middleware: 'secure',
     data: () => ({
         page: 1,
         search: "",
@@ -82,18 +88,109 @@ export default {
             },
             { text: "Municipality", value: "municipality" },
             { text: "Zip Code", value: "zipcode" },
-            { text: "Contact #", value: "contact" },
+            { text: "Contact #", value: "contact_number" },
             { text: "Actions", value: "actions", sortable: false },
         ],
-        branches: []
+        branches: [],
+        formData: {},
+        action: 'New'
     }),
 
+    computed: {
+        storeBranches(){
+           return this.$store.state.branches.branches
+        }
+    },
+
     methods: {
-        cancelParcel() {
+
+        async deleteBranch(branchToDelete){
+            console.log('branchToDelete', branchToDelete.id)
+            try {
+                const confirm = await this.$swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                })
+
+                if (confirm.isConfirmed) {
+                    const branch = await this.$store.dispatch('branches/deleteBranch', { branch_id : branchToDelete.id })
+                    if (!branch.error) {
+                        await this.getBranches()
+                        await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Deleted' })
+                        this.page = 1
+                    } else {
+                        await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                    }
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        editBranch(branch){
+            this.formData = branch
+            this.action = 'Edit'
+            this.page = 2;
+        },
+
+        showParcelNotification({ position, icon, title, showConfirmButton, time}){
+            return this.$swal.fire({
+                position: position || 'success',
+                icon: icon || 'success',
+                title: title || 'Success',
+                showConfirmButton: showConfirmButton || false,
+                timer: time || 1500,
+            });
+        },
+
+        async getBranches () {
+            try {
+                await this.$store.dispatch('branches/getBranches')
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        async updateBranch(updatedBranch) {
+            try {
+                const branch = await this.$store.dispatch('branches/updateBranch', {...updatedBranch, branch_id : updatedBranch.id})
+                if (!branch.error) {
+                    await this.getBranches()
+                    await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Updated' })
+                    this.page = 1
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        async addNewBranch(newBranch) {
+            try {
+                const branch = await this.$store.dispatch('branches/createBranch', newBranch)
+                if (!branch.error) {
+                    await this.getBranches()
+                    await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Added' })
+                    this.page = 1
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        cancelBranch() {
             this.page = 1;
         },
 
-        saveParcel() {
+        saveBranch() {
             this.page = 1;
             this.$swal.fire({
                 position: "center",
@@ -104,7 +201,7 @@ export default {
             });
         },
 
-        addParcelForm() {
+        addBranchForm() {
             this.page = 2;
         }
     },

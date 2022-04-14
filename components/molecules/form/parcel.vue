@@ -3,7 +3,7 @@
         <v-card class="pa-6" rounded="lg" flat>
             <v-card-title class="d-flex justify-space-between">
                 <div>
-                    {{ `${formTitle} Parcel` }}
+                    {{ action === 'create' ? 'New' : 'Edit' }} Parcel
                 </div>
                 <div v-if="action === 'edit'">
                     <div>
@@ -13,7 +13,7 @@
                             </v-icon>
                             Print
                         </v-btn>
-                        Trucking ID # {{ `${parcel.trucking_id}` }}
+                        Trucking ID # {{ `${parcel.reference_number}` }}
                     </div>
                 </div>
             </v-card-title>
@@ -29,6 +29,7 @@
                                     label="Full Name"
                                     dense
                                     hide-details="auto"
+                                    :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -38,6 +39,7 @@
                                     label="Address"
                                     dense
                                     hide-details="auto"
+                                    :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -46,7 +48,9 @@
                                     outlined
                                     label="Contact Number"
                                     dense
+                                    type="number"
                                     hide-details="auto"
+                                    :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -61,6 +65,7 @@
                                     label="Full Name"
                                     dense
                                     hide-details="auto"
+                                    :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -70,6 +75,7 @@
                                     label="Address"
                                     dense
                                     hide-details="auto"
+                                    :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -79,22 +85,34 @@
                                     label="Contact Number"
                                     dense
                                     hide-details="auto"
+                                    type="number"
+                                    :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-select
+                                    v-model="parcel.branch_processed"
+                                    :items="storeBranches"
+                                    item-text="name"
+                                    item-value="id"
                                     outlined
                                     label="Branch Processed"
                                     dense
                                     hide-details="auto"
+                                    :rules="[rules.required]"
                                 ></v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-select
+                                    v-model="parcel.branch_pickup"
+                                    :items="storeBranches"
+                                    item-text="name"
+                                    item-value="id"
                                     outlined
                                     label="Pickup Branch"
                                     dense
                                     hide-details="auto"
+                                    :rules="[rules.required]"
                                 ></v-select>
                             </v-col>
                         </v-row>
@@ -104,15 +122,18 @@
                         <v-row>
                             <v-col cols="12" sm="6" md="6">
                                 <v-text-field
+                                    v-model="parcel.date_shipped"
                                     outlined
                                     label="Date Shipped"
                                     dense
                                     hide-details="auto"
                                     type="date"
+                                    :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-text-field
+                                    v-model="parcel.date_received"
                                     outlined
                                     label="Date Received"
                                     dense
@@ -122,6 +143,7 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-select
+                                    v-model="parcel.type"
                                     outlined
                                     :items="['Pick Up', 'Drop Off', 'Deliver']"
                                     label="Type"
@@ -132,12 +154,14 @@
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-select
+                                    v-model="parcel.status"
                                     outlined
                                     :items="['Order Created', 'Shipped', 'Accepted', 'Pick Up', 'Delivered', 'Drop Off', 'Failed']"
                                     label="Status"
                                     dense
                                     hide-details="auto"
                                     type="date"
+                                    :rules="[rules.required]"
                                 ></v-select>
                             </v-col>
                             <v-col cols="12">
@@ -145,7 +169,6 @@
                             </v-col>
                         </v-row>
                     </div>
-                    <div>Product Information</div>
                     <div>
                         <v-row>
                             <v-col cols="12">
@@ -154,7 +177,7 @@
                         </v-row>
                     </div>
                 </v-card-text>
-                <v-card-actions class="mx-2 d-flex justify-center">
+                <v-card-actions class="ma-2 d-flex justify-end">
                     <v-btn
                         @click="cancel"
                         class="text-capitalize"
@@ -187,11 +210,19 @@ export default {
 
     data() {
         return {
-            parcel: {...this.formData}
+            parcel: {...this.formData},
+            rules: {
+                required: (value) => !!value || "Required field"
+            }
         };
     },
 
     computed: {
+
+        storeBranches(){
+            return this.$store.state.branches.branches
+        },
+
         parcelData: {
             set() {
                 console.log("test");
@@ -216,9 +247,14 @@ export default {
         },
 
         save() {
-            console.log('Parcel', this.parcel)
-            const today = new Date();
-            this.$emit("save-parcel", {...this.parcel, trucking_id : `PH208565912${Math.floor(Math.random() * 10)}`, status: 'Order Created', shipped_date: today.toLocaleDateString("en-US")});
+            console.log('PARCEL DETAILS', this.parcel)
+            if (!this.$refs.parcelForm.validate()) return
+
+            if (this.action === 'create') {
+                this.$emit("save-parcel", this.parcel);
+            } else {
+                this.$emit('update-parcel', this.parcel)
+            }
         },
     },
 };

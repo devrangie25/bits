@@ -2,29 +2,35 @@
     <div>
         <v-card class="pa-6" rounded="lg" flat>
             <v-card-title>
-                {{ "New Product" }}
+                {{ action === 'New' ? 'New' : 'Edit' }} Product
             </v-card-title>
-            <v-form ref="parcelForm">
+            <v-form ref="productForm">
                 <v-card-text>
                     <v-row>
                         <v-col cols="12" sm="6" md="6">
                             <v-text-field
                                 outlined
+                                v-model="product.name"
                                 label="Product Name"
                                 dense
                                 hide-details="auto"
+                                :rules="[rules.required]"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="6">
                             <v-text-field
+                                v-model="product.shipping_fee"
                                 outlined
                                 label="Shipping Fee"
                                 dense
                                 hide-details="auto"
+                                type="number"
+                                :rules="[rules.required]"
                             ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="6">
                             <v-select
+                                v-model="product.type"
                                 outlined
                                 label="Type"
                                 :items="[
@@ -34,15 +40,18 @@
                                 ]"
                                 dense
                                 hide-details="auto"
+                                :rules="[rules.required]"
                             ></v-select>
                         </v-col>
                         <v-col cols="12" sm="6" md="6">
                             <v-text-field
+                                v-model="product.size"
                                 outlined
                                 label="Size"
                                 type="number"
                                 dense
                                 hide-details="auto"
+                                :rules="[rules.required]"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -74,7 +83,29 @@
 export default {
     name: "productForm",
     props: {
-        form: Object,
+        formData: Object,
+        action: String
+    },
+
+    data() {
+        return {
+            product: {...this.formData},
+            rules: {
+                required: (value) => !!value || "Required field"
+            }
+        };
+    },
+
+    watch: {
+        'product.shipping_fee': function(newValue){
+            let self = this
+            self.product.shipping_fee = parseFloat(newValue).toFixed(2)
+        },
+
+        'product.size': function(newValue){
+            let self = this
+            self.product.size = parseFloat(newValue).toFixed(2)
+        }
     },
 
     methods: {
@@ -83,7 +114,8 @@ export default {
         },
 
         save() {
-            this.$emit("save-product", true);
+            if (!this.$refs.productForm.validate()) return
+            this.$emit(`${this.action === 'New' ? 'save' : 'update'}-product`, this.product);
         },
     },
 };

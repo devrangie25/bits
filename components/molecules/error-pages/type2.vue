@@ -11,7 +11,7 @@
         <div class="text-center title">
             An Error Occured
             <br v-if="$vuetify.breakpoint.mdAndDown" />
-            <NuxtLink class="mx-1" to="/">Home page</NuxtLink>
+            <NuxtLink class="mx-1" to="/admin/dashboard">Home page</NuxtLink>
         </div>
     </div>
 </template>

@@ -6,7 +6,7 @@
                     <v-card class="pa-6" rounded="lg" flat>
                         <v-data-table
                             :headers="headers"
-                            :items="parcels"
+                            :items="storeParcels"
                             sort-by="calories"
                             class="transparent rounded-lg"
                             :search="search"
@@ -40,6 +40,19 @@
                                     ></v-text-field>
                                 </v-toolbar>
                             </template>
+                            <template v-slot:item.status="{ item }">
+                                <v-chip
+                                    :color="parcelStatusColor(item.status)[0].color"
+                                    dark
+                                >
+                                    {{ item.status }}
+                                </v-chip>
+                            </template>
+                            <template v-slot:item.date_shipped="{ item }">
+                                <span>
+                                    {{ $dayjs(item.date_shipped).format('MM/DD/YYYY')}}
+                                </span>
+                            </template>
                             <template v-slot:item.actions="{ item }">
                                 <v-icon
                                     small
@@ -65,7 +78,8 @@
                         :action="formAction"
                         :formData="formData"
                         @cancel-parcel="cancelParcel"
-                        @save-parcel="saveParcel"
+                        @save-parcel="addNewParcel"
+                        @update-parcel="updateParcel"
                     />
                 </v-col>
             </v-row>
@@ -76,6 +90,7 @@
 <script>
 export default {
     layout: "loggedin",
+    middleware: 'secure',
 
     data: () => ({
         page: 1,
@@ -85,46 +100,111 @@ export default {
         headers: [
             {
                 text: "Tracking ID",
-                value: "trucking_id",
+                value: "reference_number",
             },
             {
                 text: "Shipped Date",
-                value: "shipped_date",
+                value: "date_shipped",
             },
             { text: "Sender", value: "sender_name" },
             { text: "Recipient", value: "receiver_name" },
             { text: "Status", value: "status" },
             { text: "Actions", value: "actions", sortable: false },
         ],
-        parcels: [
+        statusColors: [
             {
-                trucking_id: "PH2085659125",
-                shipped_date: "09/25/2022",
-                sender_name: "Rangie Laurente",
-                sender_address: "Poblacion, Madridejos, Cebu",
-                sender_contact: "09123856245",
-                receiver_name: "Kyla Jean",
-                receiver_address: "Mancilang, Madridejos, Cebu",
-                receiver_contact: "09387172840",
-                status: "Pick Up",
+                title: "Order Created",
+                color: '#ff9f40'
             },
             {
-                trucking_id: "PH2085612345",
-                shipped_date: "09/25/2022",
-                sender_name: "John Doe",
-                sender_address: "Poblacion, Madridejos, Cebu",
-                sender_contact: "09123856245",
-                receiver_name: "Jose Rizal",
-                receiver_address: "Tugas, Madridejos, Cebu",
-                receiver_contact: "09376591624",
-                status: "Delivered",
+                title: "Shipped",
+                color: '#00796B'
             },
-        ],
+            {
+                title: "Accepted",
+                color: '#4bc0c0'
+            },
+            {
+                title: "Pick Up",
+                color: 'primary lighten-1'
+            },
+            {
+                title: "Delivered",
+                color: '#325288'
+            },
+            {
+                title: "Drop Off",
+                color: '#1B5E20'
+            },
+            {
+                title: "Failed",
+                color: '#BF360C'
+            },
+        ]
     }),
 
-    mounted() {},
+    computed: {
+        storeParcels(){
+           return this.$store.state.parcels.parcels
+        }
+    },
 
     methods: {
+
+        parcelStatusColor(status){
+            return this.statusColors.filter(val => {
+                return val.title === status
+            })
+        },
+
+        async updateParcel(udpatedParcel){
+            try {
+                const parcel = await this.$store.dispatch('parcels/updateParcel', {...udpatedParcel, parcel_id : udpatedParcel.parcel_id})
+                if (!parcel.error) {
+                    await this.getParcels()
+                    await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Updated' })
+                    this.page = 1
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        showParcelNotification({ position, icon, title, showConfirmButton, time}){
+            return this.$swal.fire({
+                position: position || 'success',
+                icon: icon || 'success',
+                title: title || 'Success',
+                showConfirmButton: showConfirmButton || false,
+                timer: time || 1500,
+            });
+        },
+
+        async addNewParcel(newParcel) {
+            try {
+                const parcel = await this.$store.dispatch('parcels/createParcel', newParcel)
+                if (!parcel.error) {
+                    await this.getParcels()
+                    await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Added' })
+                    this.page = 1
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        async getParcels () {
+            try {
+                await this.$store.dispatch('parcels/getParcels')
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
         cancelParcel() {
             this.page = 1;
             this.formData = {}
@@ -153,31 +233,30 @@ export default {
             this.page = 2;
         },
 
-        deleteParcel(item) {
+        async deleteParcel(parcelToDelete){
             try {
-                this.$swal
-                    .fire({
-                        title: "Are you sure?",
-                        text: `Delete ${item.trucking_id}.`,
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#499f6e",
-                        cancelButtonColor: "red",
-                        confirmButtonText: "Yes, delete parcel!",
-                    })
-                    .then((result) => {
-                        if (result.isConfirmed) {
-                            this.$swal.fire({
-                                position: "center",
-                                icon: "success",
-                                title: "Parcel has been deleted.",
-                                showConfirmButton: false,
-                                timer: 1500,
-                            });
-                        }
-                    });
+                const confirm = await this.$swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                })
+
+                if (confirm.isConfirmed) {
+                    const parcel = await this.$store.dispatch('parcels/deleteParcel', { parcel_id : parcelToDelete.parcel_id })
+                    if (!parcel.error) {
+                        await this.getParcels()
+                        await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Deleted' })
+                        this.page = 1
+                    } else {
+                        await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                    }
+                }
             } catch (error) {
-                console.error("An error Occured", error);
+                console.error('error', error)
             }
         },
     },

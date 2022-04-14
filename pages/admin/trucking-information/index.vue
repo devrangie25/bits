@@ -198,7 +198,7 @@
 <script>
 export default {
     layout: "loggedin",
-
+    middleware: 'secure',
     data: () => ({
         search: "",
         dialog: false,

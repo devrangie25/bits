@@ -71,13 +71,14 @@ export default {
         // https://go.nuxtjs.dev/axios
         "@nuxtjs/axios",
         // https://go.nuxtjs.dev/pwa
-        "@nuxtjs/pwa",
+        '@nuxtjs/dayjs',
+        "@nuxtjs/pwa"
     ],
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
     axios: {
         // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-        baseURL: "/",
+        baseURL: process.env.API_URL || 'http://localhost:4000/api'
     },
 
     // PWA module configuration: https://go.nuxtjs.dev/pwa
@@ -85,6 +86,10 @@ export default {
         manifest: {
             lang: "en",
         },
+    },
+
+    env: {
+        baseUrl: process.env.API_URL || 'http://localhost:4000/api'
     },
 
     // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

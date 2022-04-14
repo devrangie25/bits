@@ -11,7 +11,7 @@
         <div class="text-center mt-6 title">
             Page Not Found!
             <br v-if="$vuetify.breakpoint.mdAndDown">
-            <Nuxt-Link class="mx-1" to="/">Home page</Nuxt-Link>
+            <Nuxt-Link class="mx-1" to="/admin/dashboard">Home page</Nuxt-Link>
         </div>
     </div>
 </template>
