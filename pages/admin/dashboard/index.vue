@@ -14,7 +14,7 @@
                             <v-icon large :color="k.color">
                                 {{ k.icon }}
                             </v-icon>
-                            <span class="mx-4 font-weight-light body-1"> {{ k.title }} </span>
+                            <span class="mx-4 font-weight-light body-2"> {{ k.title }} </span>
                         </div>
                         <div class="font-weight-light">{{ k.data || 0 }}</div>
                     </v-card-title>
