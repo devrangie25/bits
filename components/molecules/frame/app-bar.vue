@@ -13,15 +13,15 @@
         <v-app-bar-nav-icon
             @click="showDrawer"
             :class="'white--text'"
-            v-if="$route.path !== '/customer'"
+            v-if="$route.path !== '/customer' && $route.path !== '/customer/'"
         ></v-app-bar-nav-icon>
-        <v-toolbar-title v-else class="font-weight-light">
+        <v-toolbar-title v-if="$route.path === '/customer' || $route.path === '/customer/'" class="font-weight-light">
             Bantayan Island Trucking Services
         </v-toolbar-title>
 
         <v-spacer></v-spacer>
 
-        <bt-m-form-rate v-if="$route.path === '/customer'"/>
+        <bt-m-form-rate v-if="$route.path === '/customer' || $route.path === '/customer/'" />
 
         <!-- <v-btn
             v-if="$route.path === '/customer'"

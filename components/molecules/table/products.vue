@@ -2,7 +2,7 @@
     <div>
         <v-data-table
             :headers="headers"
-            :items="selectedProducts"
+            :items="demoArr"
             hide-default-footer
         >
             <template v-slot:top>
@@ -45,26 +45,16 @@
 export default {
     name: 'parcelProductsTable',
     props: {
-        products: Array
+        products: Array,
+        demoArr: Array
     },
 
     data() {
         return {
             formData: {},
-            selectedProducts: [],
             showDialog: false,
-            action: 'new'
+            action: 'new',
         };
-    },
-
-    watch: {
-        selectedProducts: function(newArr){
-            this.$emit('add-products', newArr)
-        }
-    },
-
-    mounted(){
-        console.log('products of parcel', this.products)
     },
 
     computed: {
@@ -101,39 +91,27 @@ export default {
         },
 
         updateItem(updatedItem){
-            console.log('updatedItem', updatedItem)
-            this.selectedProducts = this.selectedProducts.map(val => {
-                if (val.product_id === updatedItem.id) {
-                    return updatedItem
-                } else {
-                    return val
-                }
-            })
-
-            console.log('selectedProducts', this.selectedProducts)
+            this.$emit('update-product', updatedItem)
             this.action = 'new'
             this.formData = {}
         },
 
-        saveItem(data) {
-            let isExist = this.selectedProducts.filter(val => +val.id === +data.id)
+        saveItem(product) {
+            let isExist = this.demoArr.filter(val => +val.id === +product.id)
 
             if(isExist.length === 0) {
-                this.selectedProducts.push(data)
+                this.$emit('add-product', product)
             } else {
                 this.$swal.fire({
-                    title: `${data.name} added already.`,
+                    title: `${product.name} added already.`,
                     icon: 'warning'
                 })
             }
-
-            console.log('saveItem-selectedProducts', this.selectedProducts)
             this.formData = {}
             this.action = 'new'
         },
 
         editItem(item) {
-            console.log('editItem', item)
             this.action = 'edit'
             this.showDialog = true
             this.formData = item
@@ -152,14 +130,7 @@ export default {
                 })
 
                 if (isDeleted.isConfirmed) {
-                    this.selectedProducts = this.selectedProducts.filter(val => val.id !== item.id)
-                    this.$swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        title: 'Product Item has been deleted.',
-                        showConfirmButton: false,
-                        timer: 1500
-                    })
+                    this.$emit('delete-product', item)
                 }
             } catch (error) {
                 console.error('error', error)

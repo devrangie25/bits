@@ -126,7 +126,7 @@ export default {
                 datasets: [
                     {
                         label: "Pie Data",
-                        data: [30, 25, 12, 35, 20, 30, 10, 5],
+                        data: [],
                         backgroundColor: [
                             "#00C897",
                             "#ff9f40",
@@ -155,7 +155,7 @@ export default {
                     {
                         fill: false,
                         label: "Line Data",
-                        data: [30, 25, 12, 35, 20, 30, 10, 5],
+                        data: [],
                         backgroundColor: [
                             "#00C897",
                             "#ff9f40",
@@ -183,11 +183,37 @@ export default {
     },
 
     mounted(){
-        console.log('widgets', this.widgets)
-        this.chartData.datasets.data = this.parcels.data?.length
+        // table chart
+        this.chartData.datasets[0].data.push(this.storeParcels.length)
+        this.chartData.datasets[0].data.push(this.parcelStatus('Order Created'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Shipped'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Accepted'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Pick Up'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Delivered'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Drop Off'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Failed'))
+
+        // pie
+        this.pieData.datasets[0].data.push(this.storeParcels.length)
+        this.pieData.datasets[0].data.push(this.parcelStatus('Order Created'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Shipped'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Accepted'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Pick Up'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Delivered'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Drop Off'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Failed'))
     },
 
     computed: {
+
+        orderCreatedParcels(){
+            return this.storeParcels.filter(val => val.status === 'Order Created').length
+        },
+
+        storeParcels(){
+            return this.$store.state.parcels.parcels
+        },
+
         widgets(){
             return this.headerData.map(val => {
                 if (val.title === 'Parcels') {
@@ -211,39 +237,20 @@ export default {
                 }
             })
         },
-
-        chartDataItem(){
-            return this.headerData.map(val => {
-                if (val.title === 'Parcels') {
-                    return {parcels: this.parcels.data?.length}
-                } if (val.title === 'Order Created') {
-                    return {order_created: this.parcels.data?.filter(val => val.status === 'Order Created').length}
-                } if (val.title === 'Items Shipped') {
-                    return {shipped: this.parcels.data?.filter(val => val.status === 'Shipped').length}
-                } if (val.title === 'Accepted') {
-                    return {accepted: this.parcels.data?.filter(val => val.status === 'Accepted').length}
-                } if (val.title === 'Pick Up') {
-                    return {pick_up: this.parcels.data?.filter(val => val.status === 'Pick Up').length}
-                } if (val.title === 'Delivered') {
-                    return {delivered: this.parcels.data?.filter(val => val.status === 'Delivered').length}
-                } if (val.title === 'Drop Off') {
-                    return {drop_off: this.parcels.data?.filter(val => val.status === 'Drop Off').length}
-                } if (val.title === 'Failed') {
-                    return {failed: this.parcels.data?.filter(val => val.status === 'Failed').length}
-                } else {
-                    return val
-                }
-            })
-        }
     },
 
     methods: {
+
+        parcelStatus(status){
+            return this.storeParcels.filter(val => val.status === status).length
+        },
+
         async getParcels () {
             try {
                 const temp = await this.$store.dispatch('parcels/getParcels')
-                console.log('temp', temp)
                 if (temp) {
                     this.parcels = temp
+                    console.log('parcels', this.parcels)
                 }
             } catch (error) {
                 console.error('error', error)

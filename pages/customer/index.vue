@@ -152,21 +152,15 @@
                             </v-card>
                         </v-timeline-item>
                     </v-timeline>
-                    <!-- <v-col class="mt-16">
-                        <div class="d-flex justify-space-between">
-                            <span>
-                                Rate us
-                            </span>
-                            <v-rating
-                                large
-                                v-model="rating"
-                                color="warning"
-                                icon-label="custom icon label text {0} of {1}"
-                            ></v-rating>
-                        </div>
-                    </v-col> -->
                 </v-container>
             </v-col>
+            <v-col cols="12" class="mt-16 pt-16">
+                <div class="text-center display-1">
+                    Customer Ratings
+                </div>
+                <bt-m-ratings-carousel />
+            </v-col>
+
             <!-- <v-col cols="12">
                 <bt-m-paragraphs-about color="transparent" />
             </v-col> -->
@@ -299,3 +293,9 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.customer-ratings{
+    margin-top: 200px;
+}
+</style>

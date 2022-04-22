@@ -29,7 +29,8 @@ export default {
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
     plugins: [
         { src: "~/plugins/chart.js", mode: "client" },
-        { src: "~plugins/swal", mode: "client" },
+        { src: "~/plugins/swal", mode: "client" },
+        { src: '~/plugins/vue-html2pdf.js', mode: 'client' }
     ],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
@@ -90,6 +91,17 @@ export default {
 
     env: {
         baseUrl: process.env.API_URL || 'http://localhost:4000/api'
+    },
+
+    dayjs: {
+        locales: ['en', 'ja'],
+        defaultLocale: 'en',
+        defaultTimeZone: 'Asia/Manila',
+        plugins: [
+            'utc', // import 'dayjs/plugin/utc'
+            'timezone', // import 'dayjs/plugin/timezone'
+            'isBetween'
+        ] // Your Day.js plugin
     },
 
     // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

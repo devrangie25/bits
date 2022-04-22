@@ -152,11 +152,11 @@ export default {
         }
     },
 
-    // watch: {
-    //     finalArr: function(newVal){
-    //         console.log('newArr', newVal)
-    //     }
-    // },
+    watch: {
+        formData: function(newVal){
+            console.log('formData', newVal)
+        }
+    },
 
     mounted(){
         this.getParcelShippingDetails()

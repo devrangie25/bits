@@ -89,33 +89,11 @@
       }
     },
 
-    mounted(){
-        // this is where I stopped
-
-        // store products
-        // created_on: "2022-04-15 11:45:10"
-        // id: 2
-        // name: "Arsenio Hurley"
-        // shipping_fee: "34.00"
-        // size: "8.00"
-        // type: "Flammable"
-        // updated_on: "2022-04-15 11:45:10"
-
-        // parcel products
-        // name: "Arsenio Hurley"
-        // parcel_id: 28
-        // product_id: 2
-        // quantity: "2"
-        // shipping_fee: "2"
-        // total: "4"
-    },
-
     watch: {
 
         showDialog: function(bol){
             let self = this
             self.dialog = bol
-            console.log('dialog form', this.formData)
             this.copyData = {...this.formData}
         },
 
@@ -144,7 +122,6 @@
     methods: {
 
         cancel(){
-            console.log('this.action', this.action)
             if (this.action === 'new') {
                 this.dialog = false
                 this.copyData = {}
@@ -156,15 +133,12 @@
         },
 
         addItem(){
-            console.log('addItem action', this.action)
             if (!this.$refs.productItemForm.validate() ) return
 
             if (this.copyData.quantity == 0) return this.$swal.fire({
                 title: 'Quantity cannot be 0',
                 icon: 'warning'
             })
-
-            console.log('ADD PRODUCT ITEM', this.copyData)
 
             if (this.action === 'new') {
                 this.$emit('save-product-item', this.copyData)
