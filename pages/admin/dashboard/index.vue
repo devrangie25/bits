@@ -16,7 +16,7 @@
                             </v-icon>
                             <span class="mx-4 font-weight-light body-1"> {{ k.title }} </span>
                         </div>
-                        <div class="font-weight-light">{{ k.data }}</div>
+                        <div class="font-weight-light">{{ k.data || 0 }}</div>
                     </v-card-title>
                 </v-card>
             </v-col>
@@ -241,7 +241,10 @@ export default {
         async getParcels () {
             try {
                 const temp = await this.$store.dispatch('parcels/getParcels')
-                this.parcels = temp
+                console.log('temp', temp)
+                if (temp) {
+                    this.parcels = temp
+                }
             } catch (error) {
                 console.error('error', error)
             }

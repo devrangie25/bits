@@ -27,10 +27,57 @@ export const actions = {
         commit("SET_PARCELS", data)
     },
 
+    async getParcelByRefId({ commit }, data) {
+        try {
+            const parcel = await this.$axios.$post('/parcels/get-parcel-by-ref', data)
+            if (parcel.status) {
+                return {
+                    data: parcel.data,
+                    message: 'Success',
+                    error: false
+                }
+            } else {
+                return {
+                    message: 'Error',
+                    error: true
+                }
+            }
+        } catch (error) {
+            console.error('error', error)
+            return {
+                message: error,
+                error: true
+            }
+        }
+    },
+
     async deleteParcel({ commit }, data) {
         try {
             const parcel = await this.$axios.$post('/parcels/delete-by-id', data)
             if (parcel.status) {
+                return {
+                    message: 'Success',
+                    error: false
+                }
+            } else {
+                return {
+                    message: 'Error',
+                    error: true
+                }
+            }
+        } catch (error) {
+            console.error('error', error)
+            return {
+                message: error,
+                error: true
+            }
+        }
+    },
+
+    async getParcelShippingDetails({ commit }, parcel_id) {
+        try {
+            const shipping_details = await this.$axios.$post('/shipping-details/get-shipping-details-by-parcel', { parcel_id : parcel_id })
+            if (shipping_details.status) {
                 return {
                     message: 'Success',
                     error: false

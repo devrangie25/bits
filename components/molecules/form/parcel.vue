@@ -172,7 +172,8 @@
                     <div>
                         <v-row>
                             <v-col cols="12">
-                                <bt-m-table-products />
+                                <bt-m-table-products :products="parcel.products" @add-products="addProductsToParcel"/>
+                                <!-- <bt-m-table-products @add-products="addProductsToParcel"/> -->
                             </v-col>
                         </v-row>
                     </div>
@@ -216,21 +217,10 @@ export default {
             }
         };
     },
-
     computed: {
 
         storeBranches(){
             return this.$store.state.branches.branches
-        },
-
-        parcelData: {
-            set() {
-                console.log("test");
-            },
-
-            get() {
-                return this.tempData;
-            },
         },
 
         formTitle() {
@@ -242,13 +232,20 @@ export default {
     },
 
     methods: {
+
+        addProductsToParcel(products){
+            this.parcel = {...this.parcel, products}
+            // this.parcel['products'] = products
+        },
+
         cancel() {
             this.$emit("cancel-parcel", true);
         },
 
         save() {
-            console.log('PARCEL DETAILS', this.parcel)
             if (!this.$refs.parcelForm.validate()) return
+
+            console.log('PARCEL TO BE SAVED', this.parcel)
 
             if (this.action === 'create') {
                 this.$emit("save-parcel", this.parcel);

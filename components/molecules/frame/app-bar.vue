@@ -21,15 +21,16 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn
-            v-if="$route.path !== '/customer'"
-            to="/auth/login"
+        <bt-m-form-rate v-if="$route.path === '/customer'"/>
+
+        <!-- <v-btn
+            v-if="$route.path === '/customer'"
             class="text-capitalize font-weight-bold"
             color="primary"
             depressed
         >
-            Login
-        </v-btn>
+            Rate Our Services
+        </v-btn> -->
     </v-app-bar>
 </template>
 

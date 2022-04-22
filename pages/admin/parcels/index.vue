@@ -6,10 +6,11 @@
                     <v-card class="pa-6" rounded="lg" flat>
                         <v-data-table
                             :headers="headers"
-                            :items="storeParcels"
-                            sort-by="calories"
+                            :items="finalArr"
+                            sort-by="parcel_id"
                             class="transparent rounded-lg"
                             :search="search"
+                            :key="tableKey"
                         >
                             <template v-slot:top>
                                 <v-toolbar flat rounded="lg">
@@ -91,8 +92,10 @@
 export default {
     layout: "loggedin",
     middleware: 'secure',
-
+    name: 'indexParcel',
     data: () => ({
+        tableKey: 1,
+        finalArr: [],
         page: 1,
         search: "",
         formAction: "create",
@@ -149,7 +152,61 @@ export default {
         }
     },
 
+    // watch: {
+    //     finalArr: function(newVal){
+    //         console.log('newArr', newVal)
+    //     }
+    // },
+
+    mounted(){
+        this.getParcelShippingDetails()
+    },
+
     methods: {
+
+        async getShippingProducts(parcel_id){
+            try {
+                const shipping_details = await this.$axios.$post('/shipping-details/get-shipping-details-by-parcel', { parcel_id })
+                if (shipping_details.data?.length > 0) {
+                    return shipping_details.data.map((product, i) => {
+                        if (product.product_id !== null) {
+                            return product
+                        }
+                    }).filter(val => val !== undefined)
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        async getParcelShippingDetails(){
+            try {
+                if (this.storeParcels.length > 0) {
+                    let temp2 = []
+                    this.storeParcels.forEach(async parcel => {
+                        let products = await this.getShippingProducts(parcel.parcel_id)
+
+                        if(products?.length > 0) {
+                            let parcel_products = products.map(product => {
+                                if (product) {
+                                    if (product.parcel_id === parcel.parcel_id) {
+                                        return product
+                                    }
+                                }
+                                return
+                            });
+                            temp2.push({...parcel, products: parcel_products})
+                            this.finalArr = temp2.filter((val, ind) => temp2.indexOf(val) === ind)
+                        } else {
+                            temp2.push({...parcel, products: []})
+                            this.finalArr = temp2.filter((val, ind) => temp2.indexOf(val) === ind)
+                        }
+                    })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
 
         parcelStatusColor(status){
             return this.statusColors.filter(val => {
@@ -162,6 +219,7 @@ export default {
                 const parcel = await this.$store.dispatch('parcels/updateParcel', {...udpatedParcel, parcel_id : udpatedParcel.parcel_id})
                 if (!parcel.error) {
                     await this.getParcels()
+                    await this.getParcelShippingDetails()
                     await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Updated' })
                     this.page = 1
                 } else {
@@ -187,6 +245,7 @@ export default {
                 const parcel = await this.$store.dispatch('parcels/createParcel', newParcel)
                 if (!parcel.error) {
                     await this.getParcels()
+                    await this.getParcelShippingDetails()
                     await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Added' })
                     this.page = 1
                 } else {
@@ -249,6 +308,7 @@ export default {
                     const parcel = await this.$store.dispatch('parcels/deleteParcel', { parcel_id : parcelToDelete.parcel_id })
                     if (!parcel.error) {
                         await this.getParcels()
+                        await this.getParcelShippingDetails()
                         await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Deleted' })
                         this.page = 1
                     } else {

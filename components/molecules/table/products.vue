@@ -15,7 +15,8 @@
                         :action="action"
                         :formData="formData"
                         @save-product-item="saveItem"
-                        @show-dilaog="showDialog = false"
+                        @cancel-edit-product="cancelEditProduct"
+                        @update-product-item="updateItem"
                     />
                 </div>
             </template>
@@ -36,84 +37,17 @@
                     mdi-delete
                 </v-icon>
             </template>
-            <template v-if="false" v-slot:body.append>
-                <tr>
-                    <td>
-                        <v-select
-                            v-model="productItem.name"
-                            :items="storeProducts"
-                            item-text="name"
-                            item-value="id"
-                            class="mt-6"
-                            label="Select Product"
-                            outlined
-                            dense
-                        ></v-select>
-                    </td>
-                    <td>
-                        <v-text-field
-                            v-model="productItem.qty"
-                            class="mt-6"
-                            outlined
-                            dense
-                            type="number"
-                        ></v-text-field>
-                    </td>
-                    <td >
-                        <span>
-                            {{ productItem.shipping_fee }}
-                        </span>
-                    </td>
-                    <td>
-                        <span>
-                            {{ productItem.amount }}
-                        </span>
-                    </td>
-                    <td>
-                        <v-icon
-                            small
-                            class="mr-2"
-                            color="orange"
-                        >
-                            mdi-pencil
-                        </v-icon>
-                        <v-icon
-                            color="red"
-                            small
-                        >
-                            mdi-delete
-                        </v-icon>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        Total
-                    </td>
-                    <td>
-                        0.00
-                    </td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                </tr>
-            </template>
         </v-data-table>
-        <div v-if="false" class="d-flex justify-end">
-            <v-btn class="text-capitalize mx-2" depressed color="gray">
-                Cancel
-            </v-btn>
-            <v-btn class="text-capitalize" depressed color="primary" @click="addProductItem">
-                Add Item
-            </v-btn>
-        </div>
     </div>
 </template>
 
 <script>
 export default {
+    name: 'parcelProductsTable',
+    props: {
+        products: Array
+    },
+
     data() {
         return {
             formData: {},
@@ -121,6 +55,16 @@ export default {
             showDialog: false,
             action: 'new'
         };
+    },
+
+    watch: {
+        selectedProducts: function(newArr){
+            this.$emit('add-products', newArr)
+        }
+    },
+
+    mounted(){
+        console.log('products of parcel', this.products)
     },
 
     computed: {
@@ -150,19 +94,42 @@ export default {
 
     methods: {
 
+        cancelEditProduct(){
+            this.formData = {}
+            this.showDialog = false
+            this.action = 'new'
+        },
+
+        updateItem(updatedItem){
+            console.log('updatedItem', updatedItem)
+            this.selectedProducts = this.selectedProducts.map(val => {
+                if (val.product_id === updatedItem.id) {
+                    return updatedItem
+                } else {
+                    return val
+                }
+            })
+
+            console.log('selectedProducts', this.selectedProducts)
+            this.action = 'new'
+            this.formData = {}
+        },
+
         saveItem(data) {
             let isExist = this.selectedProducts.filter(val => +val.id === +data.id)
-
-            console.log('isExist', isExist)
 
             if(isExist.length === 0) {
                 this.selectedProducts.push(data)
             } else {
                 this.$swal.fire({
-                    title: `${this.shallowCopy.name} added already.`,
+                    title: `${data.name} added already.`,
                     icon: 'warning'
                 })
             }
+
+            console.log('saveItem-selectedProducts', this.selectedProducts)
+            this.formData = {}
+            this.action = 'new'
         },
 
         editItem(item) {
@@ -172,9 +139,31 @@ export default {
             this.formData = item
         },
 
-        deleteItem(item) {
-            console.log('deleteItem', item)
-            this.showDialog = true
+        async deleteItem(item) {
+            try {
+                const isDeleted = await this.$swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                })
+
+                if (isDeleted.isConfirmed) {
+                    this.selectedProducts = this.selectedProducts.filter(val => val.id !== item.id)
+                    this.$swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Product Item has been deleted.',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
         },
     }
 };

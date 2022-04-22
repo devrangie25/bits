@@ -47,7 +47,7 @@
                             <v-text-field
                                 v-model="product.size"
                                 outlined
-                                label="Size"
+                                label="Size (kg)"
                                 type="number"
                                 dense
                                 hide-details="auto"
@@ -99,12 +99,12 @@ export default {
     watch: {
         'product.shipping_fee': function(newValue){
             let self = this
-            self.product.shipping_fee = parseFloat(newValue).toFixed(2)
+            // self.product.shipping_fee = parseFloat(newValue).toFixed(2)
         },
 
         'product.size': function(newValue){
             let self = this
-            self.product.size = parseFloat(newValue).toFixed(2)
+            // self.product.size = parseFloat(newValue).toFixed(2)
         }
     },
 

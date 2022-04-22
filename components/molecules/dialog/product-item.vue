@@ -18,7 +18,7 @@
 
                 <v-card-text>
                     <v-select
-                        v-model="copyData.product"
+                        v-model="copyData.product_id"
                         :items="storeProducts"
                         item-value="id"
                         item-text="name"
@@ -26,6 +26,7 @@
                         outlined
                         dense
                         :rules="[rules.required]"
+                        :readonly="action === 'edit'"
                     ></v-select>
                      <v-text-field
                         v-model="copyData.quantity"
@@ -62,7 +63,7 @@
                         Cancel
                     </v-btn>
                     <v-btn color="primary" depressed @click="addItem">
-                        Add
+                        {{ action === 'new' ? 'Add' : 'Save'}}
                     </v-btn>
                 </v-card-actions>
             </v-form>
@@ -72,6 +73,7 @@
 
 <script>
   export default {
+    name: 'productItemModal',
     props: {
         formData: Object,
         showDialog: Boolean,
@@ -87,28 +89,47 @@
       }
     },
 
+    mounted(){
+        // this is where I stopped
+
+        // store products
+        // created_on: "2022-04-15 11:45:10"
+        // id: 2
+        // name: "Arsenio Hurley"
+        // shipping_fee: "34.00"
+        // size: "8.00"
+        // type: "Flammable"
+        // updated_on: "2022-04-15 11:45:10"
+
+        // parcel products
+        // name: "Arsenio Hurley"
+        // parcel_id: 28
+        // product_id: 2
+        // quantity: "2"
+        // shipping_fee: "2"
+        // total: "4"
+    },
+
     watch: {
 
         showDialog: function(bol){
             let self = this
             self.dialog = bol
+            console.log('dialog form', this.formData)
+            this.copyData = {...this.formData}
         },
 
-        'copyData.product': function(newValue) {
-            console.log('copyData.product', newValue)
-            let self = this
-            let temp = self.storeProducts.filter(val => {
-                return +val.id === +newValue
+        'copyData.product_id': function(newVal){
+            this.storeProducts.forEach(val => {
+                if (val.id === newVal) {
+                    this.copyData['shipping_fee'] = parseFloat(val['shipping_fee']).toFixed(2)
+                    this.copyData['name'] = val['name']
+                    this.copyData['id'] = val['id']
+                }
             })
-            self.copyData.shipping_fee = parseFloat(temp[0]?.shipping_fee).toFixed(2)
-            self.copyData.total = parseFloat(temp[0]?.shipping_fee).toFixed(2)
-            self.copyData.name = temp[0]?.name
-            self.copyData.quantity = 1
-            self.copyData.id = temp[0]?.id
         },
 
         'copyData.quantity': function(newValue) {
-            console.log('copyData.quantity', newValue)
             let self = this
             self.copyData.total = parseFloat(self.copyData?.shipping_fee * newValue).toFixed(2)
         }
@@ -116,35 +137,43 @@
 
     computed: {
         storeProducts(){
-           return this.$store.state.products.products
+           return [...this.$store.state.products.products]
         },
     },
 
     methods: {
 
         cancel(){
+            console.log('this.action', this.action)
             if (this.action === 'new') {
                 this.dialog = false
+                this.copyData = {}
+                this.$refs.productItemForm.resetValidation()
             } else {
-                this.$emit('show-dilaog', false)
+                this.$emit('cancel-edit-product', false)
                 this.dialog = false
             }
         },
 
         addItem(){
+            console.log('addItem action', this.action)
             if (!this.$refs.productItemForm.validate() ) return
+
             if (this.copyData.quantity == 0) return this.$swal.fire({
-                title: 'Please add quantity',
+                title: 'Quantity cannot be 0',
                 icon: 'warning'
             })
 
-            console.log('copyData', this.copyData)
+            console.log('ADD PRODUCT ITEM', this.copyData)
+
             if (this.action === 'new') {
                 this.$emit('save-product-item', this.copyData)
                 this.dialog = false
+                this.copyData = {}
+                this.$refs.productItemForm.resetValidation()
             } else {
                 this.$emit('update-product-item', this.copyData)
-                this.$emit('show-dilaog', false)
+                this.$emit('cancel-edit-product', false)
                 this.dialog = false
             }
         }

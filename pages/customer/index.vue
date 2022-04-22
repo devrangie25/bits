@@ -9,23 +9,24 @@
                     <div
                         class="mb-6 text-center headline white--text font-weight-bold"
                     >
-                        Start tracking your parcel by entering your tracking ID.
+                        Start tracking your parcel by entering your reference number.
                     </div>
 
                     <v-text-field
+                        v-model="referenceNumber"
                         outlined
                         placeholder="Enter Pracel Tracking ID"
                         hide-details="auto"
                         flat
                         append-icon="mdi-magnify"
                         solo
-                        v-on:keyup.enter="onEnter"
+                        v-on:keyup.enter="getParcelByReferenceNumber"
                     >
                     </v-text-field>
                 </v-container>
             </v-col>
 
-            <v-col v-if="false" cols="12" class="mt-16 d-flex justify-center">
+            <v-col v-if="isParcelNotFound" cols="12" class="mt-16 d-flex justify-center">
                 <div>
                     <div class="d-flex justify-center">
                         <v-img
@@ -37,14 +38,14 @@
                 </div>
             </v-col>
 
-            <v-col v-if="isSearch" cols="12">
+            <v-col v-if="isNotEmpty" cols="12">
                 <v-container style="max-width: 700px">
                     <div
                         class="my-4 mb-2 title ml-10 d-flex justify-space-between"
                     >
-                        <span class="font-weight-light"> Tracking Number </span>
+                        <span class="font-weight-light"> Parcel Details </span>
                         <span class="font-weight-bold">
-                            PH29127408211
+                            {{ parcelData.reference_number }}
                             <v-icon class="ml-2 mt-n1 copy-icon">
                                 mdi-content-copy
                             </v-icon>
@@ -52,27 +53,79 @@
                     </div>
                     <div class="mb-2 title ml-10">
                         <span class="font-weight-light subtitle-2">
-                            Parcel :
+                            Sender :
                         </span>
                         <span class="font-weight-bold subtitle-2">
-                            Smart TV LED
+                            {{ parcelData.sender_name }}
                         </span>
                     </div>
                     <div class="mb-2 title ml-10">
                         <span class="font-weight-light subtitle-2">
-                            Sender :
+                            Sender Contact Number:
                         </span>
                         <span class="font-weight-bold subtitle-2">
-                            Jose Rizal
+                            {{ parcelData.sender_contact }}
                         </span>
                     </div>
-                    <div class="mb-8 title ml-10">
+                    <div class="mb-2 title ml-10">
                         <span class="font-weight-light subtitle-2">
                             Receiver :
                         </span>
                         <span class="font-weight-bold subtitle-2">
-                            Pablo Escobar
+                            {{ parcelData.receiver_name }}
                         </span>
+                    </div>
+                    <div class="mb-2 title ml-10">
+                        <span class="font-weight-light subtitle-2">
+                            Receiver Address:
+                        </span>
+                        <span class="font-weight-bold subtitle-2">
+                            {{ parcelData.receiver_address }}
+                        </span>
+                    </div>
+                    <div class="mb-2 title ml-10">
+                        <span class="font-weight-light subtitle-2">
+                            Receiver Contact Number:
+                        </span>
+                        <span class="font-weight-bold subtitle-2">
+                            {{ parcelData.receiver_contact }}
+                        </span>
+                    </div>
+                    <div class="mb-2 title ml-10">
+                        <span class="font-weight-light subtitle-2">
+                            Status:
+                        </span>
+                        <span class="font-weight-bold subtitle-2">
+                            {{ parcelData.status }}
+                        </span>
+                    </div>
+                    <div class="mb-8 title ml-10" v-if="parcelData.products && parcelData.products.length !== 0">
+                        <span class="font-weight-light subtitle-2">
+                            Products:
+                        </span>
+                        <div v-for="(product, i) in parcelData.products" :key="i">
+                            <v-card flat color="transparent">
+                                <v-card-subtitle>
+                                    Item {{ i + 1}}.
+                                </v-card-subtitle>
+                                <v-card-text>
+                                    <div>
+                                        Name: {{ product.name }}
+                                    </div>
+                                    <div>
+                                        Quantity: {{ product.quantity }}
+                                    </div>
+                                    <div>
+                                        Shipping Fee: ₱ {{ parseFloat( product.total ).toFixed(2) }}
+                                    </div>
+                                    <div v-if="parcelData.products.length === i + 1" class="d-flex justify-end">
+                                        <span class="font-weight-bold">
+                                            Total: ₱ {{ parseFloat( totalFee ).toFixed(2) }}
+                                        </span>
+                                    </div>
+                                </v-card-text>
+                            </v-card>
+                        </div>
                     </div>
                     <v-timeline dense align-top>
                         <v-timeline-item
@@ -87,19 +140,36 @@
                                 <v-card-title
                                     class="subtitle-1 font-weight-bold"
                                 >
-                                    {{ val.date }}
+                                    {{ $dayjs(val.date).format('MMMM DD, YYYY (dddd)')}}
                                 </v-card-title>
                                 <v-card-text>
-                                    {{ val.status }} - {{ val.place }}
+                                    {{ val.title }} - {{ val.branch }}
+                                    <br>
+                                    {{ val.title2 }} - {{ val.address }}
+                                    <br>
+                                    {{ 'Contact' }} - {{ val.contact }}
                                 </v-card-text>
                             </v-card>
                         </v-timeline-item>
                     </v-timeline>
+                    <!-- <v-col class="mt-16">
+                        <div class="d-flex justify-space-between">
+                            <span>
+                                Rate us
+                            </span>
+                            <v-rating
+                                large
+                                v-model="rating"
+                                color="warning"
+                                icon-label="custom icon label text {0} of {1}"
+                            ></v-rating>
+                        </div>
+                    </v-col> -->
                 </v-container>
             </v-col>
-            <v-col cols="12">
+            <!-- <v-col cols="12">
                 <bt-m-paragraphs-about color="transparent" />
-            </v-col>
+            </v-col> -->
         </v-row>
     </div>
 </template>
@@ -107,42 +177,124 @@
 <script>
 export default {
     layout: "public",
-
+    name: 'customer',
     data() {
         return {
+            isParcelNotFound: false,
+            referenceNumber: '',
+            parcelData: {},
             isSearch: false,
-            history: [
-                {
-                    date: "March 30, 2022",
-                    status: "Pick Up",
-                    place: "Madridejos",
-                    icon: "mdi-car-pickup",
-                },
-                {
-                    date: "March 29, 2022",
-                    status: "Delivered",
-                    place: "Cebu",
-                    icon: "mdi-truck-check",
-                },
-                {
-                    date: "March 28, 2022",
-                    status: "Drop Off",
-                    place: "Cebu",
-                    icon: "mdi-cart",
-                },
-                {
-                    date: "March 27, 2022",
-                    status: "Shipped",
-                    place: "Madridejos",
-                    icon: "mdi-cart",
-                },
-            ],
+            history: [],
+            isNotEmpty: false,
+            rating: 4
         };
     },
 
+    computed: {
+        totalFee(){
+            if (this.parcelData.products?.length > 0) {
+                return this.parcelData.products.map(val => +val.total).reduce((prev, next) => prev + next, 0)
+            }
+            return 0
+        }
+    },
+
+    watch: {
+        referenceNumber:function(newVal) {
+            if(newVal === '') {
+                this.isNotEmpty = false
+            }
+        }
+    },
+
     methods: {
+
+        showParcelNotification({ position, icon, title, showConfirmButton, time}){
+            return this.$swal.fire({
+                position: position || 'success',
+                icon: icon || 'success',
+                title: title || 'Success',
+                showConfirmButton: showConfirmButton || false,
+                timer: time || 1500,
+            });
+        },
+
         onEnter() {
             this.isSearch = true;
+        },
+
+        async getShippingProducts(parcel_id){
+            try {
+                const shipping_details = await this.$axios.$post('/shipping-details/get-shipping-details-by-parcel', { parcel_id })
+                if (shipping_details.data?.length > 0) {
+                    return shipping_details.data.map((product, i) => {
+                        if (product.product_id !== null) {
+                            return product
+                        }
+                    }).filter(val => val !== undefined)
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        async getParcelByReferenceNumber() {
+            if (this.referenceNumber === '') {
+                return await this.showParcelNotification({ icon : 'error', title: 'Please input Reference Number' })
+            }
+            this.history = []
+            try {
+                const result = await this.$store.dispatch('parcels/getParcelByRefId', { reference_number : this.referenceNumber })
+                if (!result.error) {
+                    this.isSearch = true;
+                    let processed = {
+                        date: result.data[0].date_shipped,
+                        branch: result.data[0].branch_processed,
+                        address: result.data[0].branch_processed_address,
+                        contact: result.data[0].branch_processed_contact_number,
+                        icon: "mdi-cube-send",
+                        title: "Branch Processed",
+                        title2: "Branch Address"
+                    }
+                    this.history.push(processed)
+
+                    if(result.data[0].date_received !== null || result.data[0].date_received !== '' || result.data[0].date_received !== undefined) {
+                        let received = {
+                            date: result.data[0].date_received,
+                            branch: result.data[0].branch_pickup,
+                            address: result.data[0].branch_pickup_address,
+                            contact: result.data[0].branch_pickup_contact_number,
+                            icon: "mdi-car-pickup",
+                            title: "Branch Pickup",
+                            title2: "Branch Address"
+                        }
+                        this.history.push(received)
+                    }
+
+                    let products = await this.getShippingProducts(result.data[0].parcel_id)
+
+                    if(products?.length > 0) {
+                        let parcel_products = products.map(product => {
+                            if (product) {
+                                if (product.parcel_id === result.data[0].parcel_id) {
+                                    return product
+                                }
+                            }
+                            return
+                        });
+
+                        this.parcelData = {...result.data[0], products: parcel_products}
+                    } else {
+                        this.parcelData = {...result.data[0], products: []}
+                    }
+                    this.isNotEmpty = true
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'Parcel Not Found' })
+                    this.referenceNumber = ''
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
         },
     },
 };
