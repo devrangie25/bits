@@ -7,7 +7,7 @@
                 </div>
             </v-col>
             <v-col cols="12" lg="5" class="col-2-center-form">
-                <bt-m-auth-form title="Sign up"/>
+                <bt-m-auth-form :formData="formData" title="Sign up" @register-user="registerUser"/>
             </v-col>
         </v-row>
     </div>
@@ -16,7 +16,48 @@
 <script>
 export default {
     layout: "auth",
-    name: "Register"
+    name: "Register",
+
+    data(){
+        return {
+            formData: {
+                email: '',
+                password: '',
+                first_name: '',
+                last_name: '',
+                mobile_number: '',
+                status: 1,
+                user_type: 1
+            }
+        }
+    },
+
+    methods: {
+
+        showParcelNotification({ position, icon, title, showConfirmButton, time}){
+            return this.$swal.fire({
+                position: position || 'success',
+                icon: icon || 'success',
+                title: title || 'Success',
+                showConfirmButton: showConfirmButton || false,
+                timer: time || 1500,
+            });
+        },
+
+        async registerUser(userData){
+            try {
+                const newUser = await this.$store.dispatch('auth/registerUser', userData)
+                if (!newUser.error) {
+                    await this.showParcelNotification({ icon : 'success', title: 'Successfully Registered' })
+                    this.$router.push("/auth/login");
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error.message)
+            }
+        }
+    }
 };
 </script>
 

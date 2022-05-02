@@ -1,11 +1,12 @@
 <template>
     <div>
-      Admin Panel
+        <bt-m-paragraphs-about />
     </div>
 </template>
 
 <script>
 export default {
-  layout: "default",
+    name: "aboutUs",
+    layout: "loggedin"
 };
 </script>

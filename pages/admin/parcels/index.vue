@@ -2,129 +2,29 @@
     <div>
         <div class="parcel-container">
             <v-row>
-                <v-col cols="12">
+                <v-col cols="12" v-if="page === 1">
                     <v-card class="pa-6" rounded="lg" flat>
                         <v-data-table
                             :headers="headers"
-                            :items="parcels"
-                            sort-by="calories"
+                            :items="finalArr"
+                            sort-by="parcel_id"
                             class="transparent rounded-lg"
+                            :search="search"
+                            :key="tableKey"
                         >
                             <template v-slot:top>
                                 <v-toolbar flat rounded="lg">
                                     <v-toolbar-title>Parcels</v-toolbar-title>
-                                    <v-dialog
-                                        v-model="dialog"
-                                        max-width="500px"
+                                    <v-btn
+                                        class="ml-2"
+                                        x-small
+                                        depressed
+                                        fab
+                                        color="primary"
+                                        @click="addParcelForm"
                                     >
-                                        <template
-                                            v-slot:activator="{ on, attrs }"
-                                        >
-                                            <v-btn
-                                                class="ml-2"
-                                                x-small
-                                                depressed
-                                                fab
-                                                color="primary"
-                                                v-bind="attrs"
-                                                v-on="on"
-                                            >
-                                                <v-icon> mdi-plus </v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <v-card>
-                                            <v-card-title>
-                                                <span class="text-h5">{{
-                                                    formTitle
-                                                }}</span>
-                                            </v-card-title>
-
-                                            <v-card-text>
-                                                <v-container>
-                                                    <v-row>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.name
-                                                                "
-                                                                label="Dessert name"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.calories
-                                                                "
-                                                                label="Calories"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.fat
-                                                                "
-                                                                label="Fat (g)"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.carbs
-                                                                "
-                                                                label="Carbs (g)"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.protein
-                                                                "
-                                                                label="Protein (g)"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                </v-container>
-                                            </v-card-text>
-
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="close"
-                                                >
-                                                    Cancel
-                                                </v-btn>
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="save"
-                                                >
-                                                    Save
-                                                </v-btn>
-                                            </v-card-actions>
-                                        </v-card>
-                                    </v-dialog>
+                                        <v-icon> mdi-plus </v-icon>
+                                    </v-btn>
                                     <v-spacer
                                         v-for="i in 6"
                                         :key="i"
@@ -139,56 +39,49 @@
                                         hide-details
                                         class="mr-n4"
                                     ></v-text-field>
-
-                                    <v-dialog
-                                        v-model="dialogDelete"
-                                        max-width="500px"
-                                    >
-                                        <v-card>
-                                            <v-card-title class="text-h5"
-                                                >Are you sure you want to delete
-                                                this item?</v-card-title
-                                            >
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="closeDelete"
-                                                    >Cancel</v-btn
-                                                >
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="deleteItemConfirm"
-                                                    >OK</v-btn
-                                                >
-                                                <v-spacer></v-spacer>
-                                            </v-card-actions>
-                                        </v-card>
-                                    </v-dialog>
                                 </v-toolbar>
+                            </template>
+                            <template v-slot:item.status="{ item }">
+                                <v-chip
+                                    :color="parcelStatusColor(item.status)[0].color"
+                                    dark
+                                >
+                                    {{ item.status }}
+                                </v-chip>
+                            </template>
+                            <template v-slot:item.date_shipped="{ item }">
+                                <span>
+                                    {{ $dayjs(item.date_shipped).format('MM/DD/YYYY')}}
+                                </span>
                             </template>
                             <template v-slot:item.actions="{ item }">
                                 <v-icon
                                     small
                                     class="mr-2"
-                                    @click="editItem(item)"
                                     color="orange"
+                                    @click="editParcel(item)"
                                 >
                                     mdi-pencil
                                 </v-icon>
-                                <v-icon color="red" small @click="deleteItem(item)">
+                                <v-icon
+                                    color="red"
+                                    small
+                                    @click="deleteParcel(item)"
+                                >
                                     mdi-delete
                                 </v-icon>
                             </template>
-                            <template v-slot:no-data>
-                                <v-btn color="primary" @click="initialize">
-                                    Reset
-                                </v-btn>
-                            </template>
                         </v-data-table>
                     </v-card>
+                </v-col>
+                <v-col cols="12" v-if="page === 2">
+                    <bt-m-form-parcel
+                        :action="formAction"
+                        :formData="formData"
+                        @cancel-parcel="cancelParcel"
+                        @save-parcel="addNewParcel"
+                        @update-parcel="updateParcel"
+                    />
                 </v-col>
             </v-row>
         </div>
@@ -198,121 +91,234 @@
 <script>
 export default {
     layout: "loggedin",
-
+    middleware: 'secure',
+    name: 'indexParcel',
     data: () => ({
+        tableKey: 1,
+        finalArr: [],
+        page: 1,
         search: "",
-        dialog: false,
-        dialogDelete: false,
+        formAction: "create",
+        formData: {},
         headers: [
             {
-                text: "Item",
-                value: "name",
+                text: "Tracking ID",
+                value: "reference_number",
             },
-            { text: "Size", value: "carbs" },
-            { text: "Color", value: "carbs" },
-            { text: "Type", value: "protein" },
+            {
+                text: "Shipped Date",
+                value: "date_shipped",
+            },
+            { text: "Sender", value: "sender_name" },
+            { text: "Recipient", value: "receiver_name" },
+            { text: "Status", value: "status" },
             { text: "Actions", value: "actions", sortable: false },
         ],
-        parcels: [],
-        editedIndex: -1,
-        editedItem: {
-            name: "",
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0,
-        },
-        defaultItem: {
-            name: "",
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0,
-        },
+        statusColors: [
+            {
+                title: "Order Created",
+                color: '#ff9f40'
+            },
+            {
+                title: "Shipped",
+                color: '#00796B'
+            },
+            {
+                title: "Accepted",
+                color: '#4bc0c0'
+            },
+            {
+                title: "Pick Up",
+                color: 'primary lighten-1'
+            },
+            {
+                title: "Delivered",
+                color: '#325288'
+            },
+            {
+                title: "Drop Off",
+                color: '#1B5E20'
+            },
+            {
+                title: "Failed",
+                color: '#BF360C'
+            },
+        ]
     }),
 
     computed: {
-        formTitle() {
-            return this.editedIndex === -1 ? "New Item" : "Edit Item";
-        },
+        storeParcels(){
+           return this.$store.state.parcels.parcels
+        }
     },
 
     watch: {
-        dialog(val) {
-            val || this.close();
-        },
-        dialogDelete(val) {
-            val || this.closeDelete();
-        },
+        formData: function(newVal){
+            console.log('formData', newVal)
+        }
     },
 
-    created() {
-        this.initialize();
+    mounted(){
+        this.getParcelShippingDetails()
     },
 
     methods: {
-        initialize() {
-            this.parcels = [
-                {
-                    name: "Frozen Yogurt",
-                    calories: 159,
-                    fat: 6.0,
-                    carbs: 24,
-                    protein: 4.0,
-                },
-                {
-                    name: "Ice cream sandwich",
-                    calories: 237,
-                    fat: 9.0,
-                    carbs: 37,
-                    protein: 4.3,
-                },
-            ];
-        },
 
-        editItem(item) {
-            this.editedIndex = this.parcels.indexOf(item);
-            this.editedItem = Object.assign({}, item);
-            this.dialog = true;
-        },
-
-        deleteItem(item) {
-            this.editedIndex = this.parcels.indexOf(item);
-            this.editedItem = Object.assign({}, item);
-            this.dialogDelete = true;
-        },
-
-        deleteItemConfirm() {
-            this.parcels.splice(this.editedIndex, 1);
-            this.closeDelete();
-        },
-
-        close() {
-            this.dialog = false;
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem);
-                this.editedIndex = -1;
-            });
-        },
-
-        closeDelete() {
-            this.dialogDelete = false;
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem);
-                this.editedIndex = -1;
-            });
-        },
-
-        save() {
-            if (this.editedIndex > -1) {
-                Object.assign(this.parcels[this.editedIndex], this.editedItem);
-            } else {
-                this.parcels.push(this.editedItem);
+        async getShippingProducts(parcel_id){
+            try {
+                const shipping_details = await this.$axios.$post('/shipping-details/get-shipping-details-by-parcel', { parcel_id })
+                if (shipping_details.data?.length > 0) {
+                    return shipping_details.data.map((product, i) => {
+                        if (product.product_id !== null) {
+                            return product
+                        }
+                    }).filter(val => val !== undefined)
+                }
+            } catch (error) {
+                console.error('error', error)
             }
-            this.close();
+        },
+
+        async getParcelShippingDetails(){
+            try {
+                if (this.storeParcels.length > 0) {
+                    let temp2 = []
+                    this.storeParcels.forEach(async parcel => {
+                        let products = await this.getShippingProducts(parcel.parcel_id)
+
+                        if(products?.length > 0) {
+                            let parcel_products = products.map(product => {
+                                if (product) {
+                                    if (product.parcel_id === parcel.parcel_id) {
+                                        return product
+                                    }
+                                }
+                                return
+                            });
+                            temp2.push({...parcel, products: parcel_products})
+                            this.finalArr = temp2.filter((val, ind) => temp2.indexOf(val) === ind)
+                        } else {
+                            temp2.push({...parcel, products: []})
+                            this.finalArr = temp2.filter((val, ind) => temp2.indexOf(val) === ind)
+                        }
+                    })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        parcelStatusColor(status){
+            return this.statusColors.filter(val => {
+                return val.title === status
+            })
+        },
+
+        async updateParcel(udpatedParcel){
+            try {
+                const parcel = await this.$store.dispatch('parcels/updateParcel', {...udpatedParcel, parcel_id : udpatedParcel.parcel_id})
+                if (!parcel.error) {
+                    await this.getParcels()
+                    await this.getParcelShippingDetails()
+                    await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Updated' })
+                    this.page = 1
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        showParcelNotification({ position, icon, title, showConfirmButton, time}){
+            return this.$swal.fire({
+                position: position || 'success',
+                icon: icon || 'success',
+                title: title || 'Success',
+                showConfirmButton: showConfirmButton || false,
+                timer: time || 1500,
+            });
+        },
+
+        async addNewParcel(newParcel) {
+            try {
+                const parcel = await this.$store.dispatch('parcels/createParcel', newParcel)
+                if (!parcel.error) {
+                    await this.getParcels()
+                    await this.getParcelShippingDetails()
+                    await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Added' })
+                    this.page = 1
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        async getParcels () {
+            try {
+                await this.$store.dispatch('parcels/getParcels')
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        cancelParcel() {
+            this.page = 1;
+            this.formData = {}
+        },
+
+        saveParcel(newParcel) {
+            this.page = 1;
+            this.parcels = [...this.parcels, newParcel];
+            this.$swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Parcel Successfully Added",
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        },
+
+        addParcelForm() {
+            this.formAction = "create";
+            this.page = 2;
+        },
+
+        editParcel(item) {
+            this.formAction = "edit";
+            this.formData = item;
+            this.page = 2;
+        },
+
+        async deleteParcel(parcelToDelete){
+            try {
+                const confirm = await this.$swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                })
+
+                if (confirm.isConfirmed) {
+                    const parcel = await this.$store.dispatch('parcels/deleteParcel', { parcel_id : parcelToDelete.parcel_id })
+                    if (!parcel.error) {
+                        await this.getParcels()
+                        await this.getParcelShippingDetails()
+                        await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Deleted' })
+                        this.page = 1
+                    } else {
+                        await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                    }
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
         },
     },
 };
 </script>
-
-<style></style>

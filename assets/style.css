@@ -1,3 +1,19 @@
 .app {
     background: #f8f8f8 !important;
 }
+
+.public-container {
+    display: flex !important;
+    flex: 1 !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 100vh !important;
+}
+
+.copy-icon {
+    cursor: pointer !important;
+}
+
+.tracker-field-con{
+    background: #499f6e !important;
+}

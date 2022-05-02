@@ -2,129 +2,28 @@
     <div>
         <div class="parcel-container">
             <v-row>
-                <v-col cols="12">
+                <v-col cols="12" v-if="page === 1">
                     <v-card class="pa-6" rounded="lg" flat>
                         <v-data-table
                             :headers="headers"
-                            :items="parcels"
+                            :items="storeBranches"
                             sort-by="calories"
                             class="transparent rounded-lg"
+                            :search="search"
                         >
                             <template v-slot:top>
                                 <v-toolbar flat rounded="lg">
                                     <v-toolbar-title>Branches</v-toolbar-title>
-                                    <v-dialog
-                                        v-model="dialog"
-                                        max-width="500px"
+                                    <v-btn
+                                        class="ml-2"
+                                        x-small
+                                        depressed
+                                        fab
+                                        color="primary"
+                                        @click="addBranchForm"
                                     >
-                                        <template
-                                            v-slot:activator="{ on, attrs }"
-                                        >
-                                            <v-btn
-                                                class="ml-2"
-                                                x-small
-                                                depressed
-                                                fab
-                                                color="primary"
-                                                v-bind="attrs"
-                                                v-on="on"
-                                            >
-                                                <v-icon> mdi-plus </v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <v-card>
-                                            <v-card-title>
-                                                <span class="text-h5">{{
-                                                    formTitle
-                                                }}</span>
-                                            </v-card-title>
-
-                                            <v-card-text>
-                                                <v-container>
-                                                    <v-row>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.name
-                                                                "
-                                                                label="Dessert name"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.calories
-                                                                "
-                                                                label="Calories"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.fat
-                                                                "
-                                                                label="Fat (g)"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.carbs
-                                                                "
-                                                                label="Carbs (g)"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                        <v-col
-                                                            cols="12"
-                                                            sm="6"
-                                                            md="4"
-                                                        >
-                                                            <v-text-field
-                                                                v-model="
-                                                                    editedItem.protein
-                                                                "
-                                                                label="Protein (g)"
-                                                            ></v-text-field>
-                                                        </v-col>
-                                                    </v-row>
-                                                </v-container>
-                                            </v-card-text>
-
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="close"
-                                                >
-                                                    Cancel
-                                                </v-btn>
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="save"
-                                                >
-                                                    Save
-                                                </v-btn>
-                                            </v-card-actions>
-                                        </v-card>
-                                    </v-dialog>
+                                        <v-icon> mdi-plus </v-icon>
+                                    </v-btn>
                                     <v-spacer
                                         v-for="i in 6"
                                         :key="i"
@@ -132,63 +31,43 @@
                                     <v-text-field
                                         v-model="search"
                                         append-icon="mdi-magnify"
-                                        label="Search Parcel"
+                                        label="Search Branch"
                                         outlined
                                         dense
                                         single-line
                                         hide-details
                                         class="mr-n4"
                                     ></v-text-field>
-
-                                    <v-dialog
-                                        v-model="dialogDelete"
-                                        max-width="500px"
-                                    >
-                                        <v-card>
-                                            <v-card-title class="text-h5"
-                                                >Are you sure you want to delete
-                                                this item?</v-card-title
-                                            >
-                                            <v-card-actions>
-                                                <v-spacer></v-spacer>
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="closeDelete"
-                                                    >Cancel</v-btn
-                                                >
-                                                <v-btn
-                                                    color="blue darken-1"
-                                                    text
-                                                    @click="deleteItemConfirm"
-                                                    >OK</v-btn
-                                                >
-                                                <v-spacer></v-spacer>
-                                            </v-card-actions>
-                                        </v-card>
-                                    </v-dialog>
                                 </v-toolbar>
                             </template>
                             <template v-slot:item.actions="{ item }">
                                 <v-icon
                                     small
                                     class="mr-2"
-                                    @click="editItem(item)"
                                     color="orange"
+                                    @click="editBranch(item)"
                                 >
                                     mdi-pencil
                                 </v-icon>
-                                <v-icon color="red" small @click="deleteItem(item)">
+                                <v-icon
+                                    color="red"
+                                    small
+                                    @click="deleteBranch(item)"
+                                >
                                     mdi-delete
                                 </v-icon>
                             </template>
-                            <template v-slot:no-data>
-                                <v-btn color="primary" @click="initialize">
-                                    Reset
-                                </v-btn>
-                            </template>
                         </v-data-table>
                     </v-card>
+                </v-col>
+                <v-col cols="12" v-if="page === 2">
+                    <bt-m-form-branch
+                        :formData="formData"
+                        :action="action"
+                        @cancel-branch="cancelBranch"
+                        @save-branch="addNewBranch"
+                        @update-branch="updateBranch"
+                    />
                 </v-col>
             </v-row>
         </div>
@@ -198,121 +77,133 @@
 <script>
 export default {
     layout: "loggedin",
-
+    middleware: 'secure',
     data: () => ({
+        page: 1,
         search: "",
-        dialog: false,
-        dialogDelete: false,
         headers: [
             {
-                text: "Item",
+                text: "Name",
                 value: "name",
             },
-            { text: "Size", value: "carbs" },
-            { text: "Color", value: "carbs" },
-            { text: "Type", value: "protein" },
+            { text: "Municipality", value: "municipality" },
+            { text: "Zip Code", value: "zipcode" },
+            { text: "Contact #", value: "contact_number" },
             { text: "Actions", value: "actions", sortable: false },
         ],
-        parcels: [],
-        editedIndex: -1,
-        editedItem: {
-            name: "",
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0,
-        },
-        defaultItem: {
-            name: "",
-            calories: 0,
-            fat: 0,
-            carbs: 0,
-            protein: 0,
-        },
+        branches: [],
+        formData: {},
+        action: 'New'
     }),
 
     computed: {
-        formTitle() {
-            return this.editedIndex === -1 ? "New Item" : "Edit Item";
-        },
-    },
-
-    watch: {
-        dialog(val) {
-            val || this.close();
-        },
-        dialogDelete(val) {
-            val || this.closeDelete();
-        },
-    },
-
-    created() {
-        this.initialize();
+        storeBranches(){
+           return this.$store.state.branches.branches
+        }
     },
 
     methods: {
-        initialize() {
-            this.parcels = [
-                {
-                    name: "Frozen Yogurt",
-                    calories: 159,
-                    fat: 6.0,
-                    carbs: 24,
-                    protein: 4.0,
-                },
-                {
-                    name: "Ice cream sandwich",
-                    calories: 237,
-                    fat: 9.0,
-                    carbs: 37,
-                    protein: 4.3,
-                },
-            ];
-        },
 
-        editItem(item) {
-            this.editedIndex = this.parcels.indexOf(item);
-            this.editedItem = Object.assign({}, item);
-            this.dialog = true;
-        },
+        async deleteBranch(branchToDelete){
+            console.log('branchToDelete', branchToDelete.id)
+            try {
+                const confirm = await this.$swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                })
 
-        deleteItem(item) {
-            this.editedIndex = this.parcels.indexOf(item);
-            this.editedItem = Object.assign({}, item);
-            this.dialogDelete = true;
-        },
-
-        deleteItemConfirm() {
-            this.parcels.splice(this.editedIndex, 1);
-            this.closeDelete();
-        },
-
-        close() {
-            this.dialog = false;
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem);
-                this.editedIndex = -1;
-            });
-        },
-
-        closeDelete() {
-            this.dialogDelete = false;
-            this.$nextTick(() => {
-                this.editedItem = Object.assign({}, this.defaultItem);
-                this.editedIndex = -1;
-            });
-        },
-
-        save() {
-            if (this.editedIndex > -1) {
-                Object.assign(this.parcels[this.editedIndex], this.editedItem);
-            } else {
-                this.parcels.push(this.editedItem);
+                if (confirm.isConfirmed) {
+                    const branch = await this.$store.dispatch('branches/deleteBranch', { branch_id : branchToDelete.id })
+                    if (!branch.error) {
+                        await this.getBranches()
+                        await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Deleted' })
+                        this.page = 1
+                    } else {
+                        await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                    }
+                }
+            } catch (error) {
+                console.error('error', error)
             }
-            this.close();
         },
+
+        editBranch(branch){
+            this.formData = branch
+            this.action = 'Edit'
+            this.page = 2;
+        },
+
+        showParcelNotification({ position, icon, title, showConfirmButton, time}){
+            return this.$swal.fire({
+                position: position || 'success',
+                icon: icon || 'success',
+                title: title || 'Success',
+                showConfirmButton: showConfirmButton || false,
+                timer: time || 1500,
+            });
+        },
+
+        async getBranches () {
+            try {
+                await this.$store.dispatch('branches/getBranches')
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        async updateBranch(updatedBranch) {
+            try {
+                const branch = await this.$store.dispatch('branches/updateBranch', {...updatedBranch, branch_id : updatedBranch.id})
+                if (!branch.error) {
+                    await this.getBranches()
+                    await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Updated' })
+                    this.page = 1
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        async addNewBranch(newBranch) {
+            try {
+                const branch = await this.$store.dispatch('branches/createBranch', newBranch)
+                if (!branch.error) {
+                    await this.getBranches()
+                    await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Added' })
+                    this.page = 1
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                }
+            } catch (error) {
+                console.error('error', error)
+            }
+        },
+
+        cancelBranch() {
+            this.page = 1;
+        },
+
+        saveBranch() {
+            this.page = 1;
+            this.$swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Branch Successully Added",
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        },
+
+        addBranchForm() {
+            this.page = 2;
+        }
     },
 };
 </script>
-
-<style></style>

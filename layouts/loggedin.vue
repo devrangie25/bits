@@ -1,6 +1,7 @@
 <template>
     <v-app class="app">
-        <bt-m-frame-nav-bar />
+        <bt-m-frame-app-bar v-if="$vuetify.breakpoint.mdAndDown"/>
+        <bt-m-frame-nav-bar/>
         <v-main>
             <v-container fluid class="pa-6">
                 <Nuxt />

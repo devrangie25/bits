@@ -7,7 +7,7 @@
                 </div>
             </v-col>
             <v-col cols="12" lg="5" class="col-2-center-form">
-                <bt-m-auth-form title="Login"/>
+                <bt-m-auth-form :formData="formData" title="Login" @login-user="loginUser"/>
             </v-col>
         </v-row>
     </div>
@@ -17,6 +17,40 @@
 export default {
     layout: "auth",
     name: "login",
+    data(){
+        return {
+            formData: {
+                email: '',
+                password: ''
+            }
+        }
+    },
+
+    methods: {
+        showParcelNotification({ position, icon, title, showConfirmButton, time}){
+            return this.$swal.fire({
+                position: position || 'success',
+                icon: icon || 'success',
+                title: title || 'Success',
+                showConfirmButton: showConfirmButton || false,
+                timer: time || 1500,
+            });
+        },
+
+        async loginUser(userData){
+            try {
+                const user = await this.$store.dispatch('auth/loginUser', userData)
+                if (!user.error) {
+                    await this.$router.push("/admin/dashboard");
+                    await this.showParcelNotification({ icon : 'success', title: 'Successfully Login' })
+                } else {
+                    await this.showParcelNotification({ icon : 'error', title: 'User Not Foud' })
+                }
+            } catch (error) {
+                console.error('error', error.message)
+            }
+        }
+    }
 };
 </script>
 

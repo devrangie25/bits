@@ -12,7 +12,7 @@
                         >
                             <template v-slot:top>
                                 <v-toolbar flat rounded="lg">
-                                    <v-toolbar-title>Deliveries</v-toolbar-title>
+                                    <v-toolbar-title>Trucking Information</v-toolbar-title>
                                     <v-dialog
                                         v-model="dialog"
                                         max-width="500px"
@@ -132,7 +132,7 @@
                                     <v-text-field
                                         v-model="search"
                                         append-icon="mdi-magnify"
-                                        label="Search Delivery"
+                                        label="Search Parcel"
                                         outlined
                                         dense
                                         single-line
@@ -198,7 +198,7 @@
 <script>
 export default {
     layout: "loggedin",
-
+    middleware: 'secure',
     data: () => ({
         search: "",
         dialog: false,
