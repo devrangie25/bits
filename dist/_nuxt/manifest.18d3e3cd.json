@@ -1,6 +1,7 @@
 {
   "name": "bits",
   "short_name": "bits",
+  "description": "## Build Setup",
   "icons": [
     {
       "src": "/_nuxt/icons/icon_64x64.e3e9fb.png",
