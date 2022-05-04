@@ -47,8 +47,8 @@
                             <v-text-field
                                 v-model="product.size"
                                 outlined
-                                label="Size (kg)"
-                                type="number"
+                                label="Size"
+                                type="text"
                                 dense
                                 hide-details="auto"
                                 :rules="[rules.required]"

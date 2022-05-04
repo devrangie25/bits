@@ -2,7 +2,7 @@
     <div>
         <v-row no-gutters>
             <v-col cols="12" lg="7" class="bg-img d-none d-lg-flex">
-                <div class="display-2 font-weight-bold col-1-center-form ">
+                <div :class="`${['large'].includes(width) ? 'display-1' : 'display-2'} font-weight-bold col-1-center-form`">
                     Bantayan Island Trucking Services
                 </div>
             </v-col>
@@ -25,6 +25,33 @@ export default {
                 confirmPassword: ''
             }
         }
+    },
+
+    computed: {
+        width() {
+			const screenWidth = this.$vuetify.breakpoint.width;
+
+			if (screenWidth < 600) {
+				console.log("Extra Small Screen");
+				return "extra-small";
+			}
+			if (screenWidth > 600 && screenWidth < 960) {
+				console.log("Small Screen");
+				return "small";
+			}
+			if (screenWidth > 960 && screenWidth < 1264) {
+				console.log("Medium Screen");
+				return "medium";
+			}
+			if (screenWidth > 1264 && screenWidth < 1904) {
+				console.log("Large Screen");
+				return "large";
+			}
+			if (screenWidth > 1904) {
+				console.log("Extra Large Screen");
+				return "extra-large";
+			}
+		},
     },
 
     methods: {

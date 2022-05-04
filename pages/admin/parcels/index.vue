@@ -81,6 +81,7 @@
                         @cancel-parcel="cancelParcel"
                         @save-parcel="addNewParcel"
                         @update-parcel="updateParcel"
+                        @product-item-deleted="getParcelShippingDetails"
                     />
                 </v-col>
             </v-row>

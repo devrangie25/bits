@@ -88,7 +88,7 @@ export default {
                 value: "name",
             },
             { text: "Type", value: "type" },
-            { text: "Size (kg)", value: "size" },
+            { text: "Size", value: "size" },
             { text: "Shipping Fee (₱)", value: "shipping_fee" },
             { text: "Actions", value: "actions", sortable: false },
         ],

@@ -1,6 +1,11 @@
 <template>
     <div>
         <v-row>
+            <v-col cols="12">
+                <bt-a-alert v-if="getNotification" :description="parcelNotif.msg" />
+            </v-col>
+        </v-row>
+        <v-row>
             <v-col
                 v-for="(k, i) in widgets"
                 :key="i"
@@ -205,6 +210,17 @@ export default {
     },
 
     computed: {
+
+        getNotification(){
+            if (Object.keys(this.$store.state.parcels.latest_action).length > 0) {
+                return true
+            }
+            return false
+        },
+
+        parcelNotif(){
+            return this.$store.state.parcels.latest_action
+        },
 
         orderCreatedParcels(){
             return this.storeParcels.filter(val => val.status === 'Order Created').length

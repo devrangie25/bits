@@ -1,5 +1,6 @@
 export const state = () => ({
-    parcels: []
+    parcels: [],
+    latest_action: {}
 });
 
 export const mutations = {
@@ -9,13 +10,21 @@ export const mutations = {
 
     SET_PARCELS(state, data) {
         state.parcels = data
+    },
+
+    SET_LATEST_ACTION(state, data) {
+        state.latest_action = data
     }
 };
 
 export const getters = {
     getParcels: (state) => {
         return state.parcels
-    }
+    },
+
+    getLatestAction: (state) => {
+        return state.latest_action
+    },
 }
 
 export const actions = {
@@ -25,6 +34,10 @@ export const actions = {
 
     setParcels({ commit }, data) {
         commit("SET_PARCELS", data)
+    },
+
+    setLatestAction({ commit }, data) {
+        commit("SET_LATEST_ACTION", data)
     },
 
     async getParcelByRefId({ commit }, data) {
@@ -140,6 +153,7 @@ export const actions = {
         try {
             const newParcel = await this.$axios.$post('/parcels/create', data)
             if (newParcel.status) {
+                commit("SET_LATEST_ACTION", { data: data, action: 'Add', msg: `Parcel has been added` })
                 return {
                     data: newParcel.data,
                     message: 'Success',

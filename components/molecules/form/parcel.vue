@@ -7,7 +7,10 @@
                     <div class="d-flex">
                         <bt-m-pdf-parcel-details>
                             <section>
-                                <div class="title">Parcel Details</div>
+                                <div class="date-title">
+                                    <div class="title">Parcel Details</div>
+                                    <div class="date">{{ $dayjs(new Date()).format('MMMM DD, YYYY') }}</div>
+                                </div>
                                 <div class="header-title">BANTAYAN ISLAND TRUCKING SERVICES</div>
                                 <div class="refno">
                                     <span class="refnotxt">
@@ -65,7 +68,7 @@
                                         {{ parcel.receiver_contact }}
                                     </div>
                                 </div>
-                                <div class="refno">
+                                <div class="refno" v-if="demoArr.length > 0">
                                     <span class="refnotxt">
                                         Product Information
                                     </span>
@@ -370,6 +373,7 @@ export default {
                     this.demoArr = this.demoArr.filter(
                         (val) => val.id !== deleteProduct.id
                     );
+                    this.$emit('product-item-deleted', true)
                     this.$swal.fire({
                         position: 'center',
                         icon: 'success',
@@ -405,15 +409,6 @@ export default {
         save() {
             if (!this.$refs.parcelForm.validate()) return;
 
-            this.parcel = { ...this.parcel, products: this.demoArr };
-
-            if (this.parcel.products.length === 0) {
-                return this.$swal.fire({
-                    title: `Please add product(s)`,
-                    icon: "warning",
-                });
-            }
-
             console.log("PARCEL TO BE SAVED", this.parcel);
             if (this.action === "create") {
                 this.$emit("save-parcel", this.parcel);
@@ -428,5 +423,16 @@ export default {
 <style scoped>
 .title {
     margin-top: 100px;
+}
+
+.date {
+    margin-right: 100px;
+    margin-top: 100px;
+}
+
+.date-title {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
 }
 </style>

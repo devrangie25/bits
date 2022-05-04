@@ -22,6 +22,19 @@
                         solo
                         v-on:keyup.enter="getParcelByReferenceNumber"
                     >
+                        <template #append>
+                            <v-btn
+                                color="secondary"
+                                depressed
+                                class="text-capitalize"
+                                @click="getParcelByReferenceNumber"
+                            >
+                                Search
+                                <v-icon right>
+                                    mdi-magnify
+                                </v-icon>
+                            </v-btn>
+                        </template>
                     </v-text-field>
                 </v-container>
             </v-col>
