@@ -2,7 +2,7 @@
     <div>
         <v-card class="pa-6" rounded="lg" flat>
             <v-card-title>
-                {{ action === 'create' ? 'New' : 'Edit' }} Branch
+                {{ action === 'New' ? 'New' : 'Edit' }} Branch
             </v-card-title>
             <v-form ref="branchForm">
                 <v-card-text>

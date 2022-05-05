@@ -130,12 +130,10 @@ export default {
         dateFrom: '',
         statusItems: [
             "Order Created",
-            "Items Shipped",
-            "Accepted",
-            "Pick Up",
-            "Delivered",
-            "Drop Off",
-            "Failed",
+            'In Transit',
+            'Picked Up',
+            'Dropped Off',
+            'Unsuccessful Delivery'
         ],
         headers: [
             {
