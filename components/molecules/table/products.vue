@@ -11,6 +11,7 @@
                         Product Information
                     </span>
                     <bt-m-dialog-product-item
+                        :formStatus="formStatus"
                         :showDialog="showDialog"
                         :action="action"
                         :formData="formData"
@@ -22,6 +23,7 @@
             </template>
             <template v-slot:item.actions="{ item }">
                 <v-icon
+                    :disabled="formStatus === 'edit'"
                     small
                     class="mr-2"
                     color="orange"
@@ -30,6 +32,7 @@
                     mdi-pencil
                 </v-icon>
                 <v-icon
+                    :disabled="formStatus === 'edit'"
                     color="red"
                     small
                     @click="deleteItem(item)"
@@ -45,6 +48,7 @@
 export default {
     name: 'parcelProductsTable',
     props: {
+        formStatus: String,
         products: Array,
         demoArr: Array
     },
@@ -74,6 +78,10 @@ export default {
                 {
                     text: "Quantity",
                     value: "quantity"
+                },
+                {
+                    text: "Size",
+                    value: "size"
                 },
                 { text: "Shipping Fee (₱)", value: "shipping_fee" },
                 { text: "Amount (₱)", value: "total" },

@@ -64,7 +64,7 @@
                     <bt-m-form-branch
                         :formData="formData"
                         :action="action"
-                        @cancel-branch="cancelBranch"
+                        @cancel-branch="cancelOrClearBranchForm"
                         @save-branch="addNewBranch"
                         @update-branch="updateBranch"
                     />
@@ -162,7 +162,7 @@ export default {
                 if (!branch.error) {
                     await this.getBranches()
                     await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Updated' })
-                    this.page = 1
+                    this.cancelOrClearBranchForm()
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
                 }
@@ -177,7 +177,7 @@ export default {
                 if (!branch.error) {
                     await this.getBranches()
                     await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Added' })
-                    this.page = 1
+                    this.cancelOrClearBranchForm()
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
                 }
@@ -186,8 +186,9 @@ export default {
             }
         },
 
-        cancelBranch() {
+        cancelOrClearBranchForm() {
             this.page = 1;
+            this.formData = {}
         },
 
         saveBranch() {

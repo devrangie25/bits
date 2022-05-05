@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="dialog" width="500" persistent>
         <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" depressed v-bind="attrs" v-on="on" class="text-capitalize">
+            <v-btn color="primary" :disabled="formStatus === 'edit'" depressed v-bind="attrs" v-on="on" class="text-capitalize">
                 <v-icon left>
                     mdi-plus
                 </v-icon>
@@ -34,6 +34,15 @@
                         outlined
                         dense
                         type="number"
+                        :rules="[rules.required]"
+                    ></v-text-field>
+                    <v-text-field
+                        v-model="copyData.size"
+                        label="Size"
+                        outlined
+                        dense
+                        type="text"
+                        readonly
                         :rules="[rules.required]"
                     ></v-text-field>
                     <v-text-field
@@ -75,6 +84,7 @@
   export default {
     name: 'productItemModal',
     props: {
+        formStatus: String,
         formData: Object,
         showDialog: Boolean,
         action: String
@@ -101,6 +111,7 @@
             this.storeProducts.forEach(val => {
                 if (val.id === newVal) {
                     this.copyData['shipping_fee'] = parseFloat(val['shipping_fee']).toFixed(2)
+                    this.copyData['size'] = val['size']
                     this.copyData['name'] = val['name']
                     this.copyData['id'] = val['id']
                 }

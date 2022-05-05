@@ -10,7 +10,7 @@
                 v-for="(k, i) in widgets"
                 :key="i"
                 cols="12"
-                lg="3"
+                lg="4"
                 md="6"
             >
                 <v-card height="100" flat rounded="lg" class="pa-4">
@@ -88,32 +88,22 @@ export default {
                 },
                 {
                     icon: "mdi-airplane-takeoff",
-                    title: "Items Shipped",
+                    title: "In Transit",
                     color: '#ffcd56'
                 },
                 {
-                    icon: "mdi-office-building",
-                    title: "Accepted",
-                    color: '#4bc0c0'
-                },
-                {
                     icon: "mdi-car-pickup",
-                    title: "Pick Up",
+                    title: "Picked Up",
                     color: '#D96098'
                 },
                 {
-                    icon: "mdi-truck",
-                    title: "Delivered",
-                    color: '#325288'
-                },
-                {
                     icon: "mdi-map-marker",
-                    title: "Drop Off",
+                    title: "Dropped Off",
                     color: '#D4ECDD'
                 },
                 {
                     icon: "mdi-alert-circle",
-                    title: "Failed",
+                    title: "Unsuccessful Delivery",
                     color: '#BF360C'
                 },
             ],
@@ -121,12 +111,10 @@ export default {
                 labels: [
                     "Parcels",
                     "Order Created",
-                    "Items Shipped",
-                    "Accepted",
-                    "Pick Up",
-                    "Delivered",
-                    "Drop Off",
-                    "Failed",
+                    "In Transit",
+                    "Picked Up",
+                    "Dropped Off",
+                    "Unsuccessful Delivery",
                 ],
                 datasets: [
                     {
@@ -138,8 +126,6 @@ export default {
                             "#ffcd56",
                             "#4bc0c0",
                             "#D96098",
-                            "#325288",
-                            "#D4ECDD",
                             "#BF360C",
                         ],
                     },
@@ -149,12 +135,10 @@ export default {
                 labels: [
                     "Parcels",
                     "Order Created",
-                    "Items Shipped",
-                    "Accepted",
-                    "Pick Up",
-                    "Delivered",
-                    "Drop Off",
-                    "Failed",
+                    "In Transit",
+                    "Picked Up",
+                    "Dropped Off",
+                    "Unsuccessful Delivery",
                 ],
                 datasets: [
                     {
@@ -167,8 +151,6 @@ export default {
                             "#ffcd56",
                             "#4bc0c0",
                             "#D96098",
-                            "#325288",
-                            "#D4ECDD",
                             "#BF360C",
                         ],
                         borderColor: "#4bc0c0",
@@ -191,22 +173,18 @@ export default {
         // table chart
         this.chartData.datasets[0].data.push(this.storeParcels.length)
         this.chartData.datasets[0].data.push(this.parcelStatus('Order Created'))
-        this.chartData.datasets[0].data.push(this.parcelStatus('Shipped'))
-        this.chartData.datasets[0].data.push(this.parcelStatus('Accepted'))
-        this.chartData.datasets[0].data.push(this.parcelStatus('Pick Up'))
-        this.chartData.datasets[0].data.push(this.parcelStatus('Delivered'))
-        this.chartData.datasets[0].data.push(this.parcelStatus('Drop Off'))
-        this.chartData.datasets[0].data.push(this.parcelStatus('Failed'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('In Transit'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Picked Up'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Dropped Off'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Unsuccessful Delivery'))
 
         // pie
         this.pieData.datasets[0].data.push(this.storeParcels.length)
         this.pieData.datasets[0].data.push(this.parcelStatus('Order Created'))
-        this.pieData.datasets[0].data.push(this.parcelStatus('Shipped'))
-        this.pieData.datasets[0].data.push(this.parcelStatus('Accepted'))
-        this.pieData.datasets[0].data.push(this.parcelStatus('Pick Up'))
-        this.pieData.datasets[0].data.push(this.parcelStatus('Delivered'))
-        this.pieData.datasets[0].data.push(this.parcelStatus('Drop Off'))
-        this.pieData.datasets[0].data.push(this.parcelStatus('Failed'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('In Transit'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Picked Up'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Dropped Off'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Unsuccessful Delivery'))
     },
 
     computed: {
@@ -236,18 +214,14 @@ export default {
                     return {...val, data: this.parcels.data?.length}
                 } if (val.title === 'Order Created') {
                     return {...val, data: this.parcels.data?.filter(val => val.status === 'Order Created').length}
-                } if (val.title === 'Items Shipped') {
-                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Shipped').length}
-                } if (val.title === 'Accepted') {
-                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Accepted').length}
-                } if (val.title === 'Pick Up') {
-                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Pick Up').length}
-                } if (val.title === 'Delivered') {
-                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Delivered').length}
-                } if (val.title === 'Drop Off') {
-                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Drop Off').length}
-                } if (val.title === 'Failed') {
-                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Failed').length}
+                } if (val.title === 'In Transit') {
+                    return {...val, data: this.parcels.data?.filter(val => val.status === 'In Transit').length}
+                } if (val.title === 'Picked Up') {
+                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Picked Up').length}
+                } if (val.title === 'Dropped Off') {
+                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Dropped Off').length}
+                } if (val.title === 'Unsuccessful Delivery') {
+                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Unsuccessful Delivery').length}
                 }else {
                     return val
                 }

@@ -90,6 +90,7 @@ export const actions = {
     async getParcelShippingDetails({ commit }, parcel_id) {
         try {
             const shipping_details = await this.$axios.$post('/shipping-details/get-shipping-details-by-parcel', { parcel_id : parcel_id })
+            console.log('shipping_details', shipping_details)
             if (shipping_details.status) {
                 return {
                     message: 'Success',
@@ -150,6 +151,7 @@ export const actions = {
     },
 
     async createParcel({ commit }, data) {
+        console.log('createParcel from store', data)
         try {
             const newParcel = await this.$axios.$post('/parcels/create', data)
             if (newParcel.status) {

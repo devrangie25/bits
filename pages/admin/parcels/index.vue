@@ -8,6 +8,7 @@
                             :headers="headers"
                             :items="finalArr"
                             sort-by="parcel_id"
+                            sort-desc="parcel_id"
                             class="transparent rounded-lg"
                             :search="search"
                             :key="tableKey"
@@ -57,7 +58,6 @@
                             <template v-slot:item.actions="{ item }">
                                 <v-icon
                                     small
-                                    class="mr-2"
                                     color="orange"
                                     @click="editParcel(item)"
                                 >
@@ -65,6 +65,7 @@
                                 </v-icon>
                                 <v-icon
                                     color="red"
+                                    class="mx-2"
                                     small
                                     @click="deleteParcel(item)"
                                 >
@@ -100,7 +101,7 @@ export default {
         page: 1,
         search: "",
         formAction: "create",
-        formData: {},
+        formData: { status: 'Order Created' },
         headers: [
             {
                 text: "Tracking ID",
@@ -121,27 +122,19 @@ export default {
                 color: '#ff9f40'
             },
             {
-                title: "Shipped",
+                title: "In Transit",
                 color: '#00796B'
             },
             {
-                title: "Accepted",
-                color: '#4bc0c0'
-            },
-            {
-                title: "Pick Up",
+                title: "Picked Up",
                 color: 'primary lighten-1'
             },
             {
-                title: "Delivered",
-                color: '#325288'
-            },
-            {
-                title: "Drop Off",
+                title: "Dropped Off",
                 color: '#1B5E20'
             },
             {
-                title: "Failed",
+                title: "Unsuccessful Delivery",
                 color: '#BF360C'
             },
         ]

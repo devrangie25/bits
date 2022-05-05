@@ -64,7 +64,7 @@
                     <bt-m-form-product
                         :formData="formData"
                         :action="action"
-                        @cancel-product="cancelParcel"
+                        @cancel-product="cancelOrClearProductForm"
                         @save-product="addNewProduct"
                         @update-product="updateProduct"
                     />
@@ -162,7 +162,7 @@ export default {
                 if (!product.error) {
                     await this.getProducts()
                     await this.showParcelNotification({ icon : 'success', title: 'Product Successfully Updated' })
-                    this.page = 1
+                    this.cancelOrClearProductForm()
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
                 }
@@ -177,7 +177,7 @@ export default {
                 if (!product.error) {
                     await this.getProducts()
                     await this.showParcelNotification({ icon : 'success', title: 'Product Successfully Added' })
-                    this.page = 1
+                    this.cancelOrClearProductForm()
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
                 }
@@ -186,8 +186,9 @@ export default {
             }
         },
 
-        cancelParcel() {
+        cancelOrClearProductForm() {
             this.page = 1;
+            this.formData = {}
         },
 
         saveParcel() {

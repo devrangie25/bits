@@ -59,9 +59,6 @@
                         <span class="font-weight-light"> Parcel Details </span>
                         <span class="font-weight-bold">
                             {{ parcelData.reference_number }}
-                            <v-icon class="ml-2 mt-n1 copy-icon">
-                                mdi-content-copy
-                            </v-icon>
                         </span>
                     </div>
                     <div class="mb-2 title ml-10">
@@ -110,6 +107,14 @@
                         </span>
                         <span class="font-weight-bold subtitle-2">
                             {{ parcelData.status }}
+                        </span>
+                    </div>
+                    <div v-if="parcelData.status === 'Unsuccessful Delivery'" class="mb-2 title ml-10">
+                        <span class="font-weight-light subtitle-2">
+                            Note:
+                        </span>
+                        <span class="font-weight-bold subtitle-2">
+                            Return To Sender
                         </span>
                     </div>
                     <div class="mb-8 title ml-10" v-if="parcelData.products && parcelData.products.length !== 0">

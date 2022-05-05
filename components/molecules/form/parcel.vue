@@ -134,6 +134,7 @@
                                     dense
                                     hide-details="auto"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -144,6 +145,7 @@
                                     dense
                                     hide-details="auto"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -155,6 +157,7 @@
                                     type="number"
                                     hide-details="auto"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -170,6 +173,7 @@
                                     dense
                                     hide-details="auto"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -180,6 +184,7 @@
                                     dense
                                     hide-details="auto"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -191,6 +196,7 @@
                                     hide-details="auto"
                                     type="number"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -204,6 +210,7 @@
                                     dense
                                     hide-details="auto"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -217,6 +224,7 @@
                                     dense
                                     hide-details="auto"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-select>
                             </v-col>
                         </v-row>
@@ -233,6 +241,7 @@
                                     hide-details="auto"
                                     type="date"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -243,32 +252,33 @@
                                     dense
                                     hide-details="auto"
                                     type="date"
+                                    :readonly="isFormReadOnly"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-select
                                     v-model="parcel.type"
                                     outlined
-                                    :items="['Pick Up', 'Drop Off', 'Deliver']"
-                                    label="Type"
+                                    :items="['Pick Up', 'Drop Off', 'Door to door']"
+                                    label="Type of Delivery"
                                     dense
                                     hide-details="auto"
                                     type="date"
                                     :rules="[rules.required]"
+                                    :readonly="isFormReadOnly"
                                 ></v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
                                 <v-select
                                     v-model="parcel.status"
                                     outlined
+                                    :readonly="action === 'create'"
                                     :items="[
                                         'Order Created',
-                                        'Shipped',
-                                        'Accepted',
-                                        'Pick Up',
-                                        'Delivered',
-                                        'Drop Off',
-                                        'Failed',
+                                        'In Transit',
+                                        'Picked Up',
+                                        'Dropped Off',
+                                        'Unsuccessful Delivery',
                                     ]"
                                     label="Status"
                                     dense
@@ -286,6 +296,7 @@
                         <v-row>
                             <v-col cols="12">
                                 <bt-m-table-products
+                                    :formStatus="action"
                                     :demoArr="demoArr"
                                     @add-product="addProduct"
                                     @update-product="updateProduct"
@@ -348,6 +359,14 @@ export default {
     },
 
     computed: {
+
+        isFormReadOnly(){
+            if (this.action === 'edit') {
+                return true
+            }
+            return false
+        },
+
         storeBranches() {
             return this.$store.state.branches.branches;
         },
@@ -408,6 +427,15 @@ export default {
 
         save() {
             if (!this.$refs.parcelForm.validate()) return;
+
+            this.parcel = { ...this.parcel, products: this.demoArr };
+
+            if (this.parcel.products.length === 0) {
+                return this.$swal.fire({
+                    title: `Please add product(s)`,
+                    icon: "warning",
+                });
+            }
 
             console.log("PARCEL TO BE SAVED", this.parcel);
             if (this.action === "create") {
