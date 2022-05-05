@@ -73,6 +73,7 @@
                 </v-card-text>
                 <v-card-actions class="mx-2 d-flex justify-end">
                     <v-btn
+                        :disabled="isLoading"
                         @click="cancel"
                         class="text-capitalize"
                         color="gray"
@@ -81,6 +82,8 @@
                         Cancel
                     </v-btn>
                     <v-btn
+                        :loading="isLoading"
+                        :disabled="isLoading"
                         @click="save"
                         class="text-capitalize"
                         color="primary"
@@ -99,7 +102,8 @@ export default {
     name: "branchForm",
     props: {
         formData: Object,
-        action: String
+        action: String,
+        isLoading: Boolean
     },
 
     data(){

@@ -14,12 +14,13 @@
         <v-btn
           v-for="(x, y) in socials"
           :key="y"
-          class="mx-4 white--text"
-          icon
+          class="mx-4 white--text text-none btn"
+          text
         >
-          <v-icon size="24px">
+          <v-icon size="24px" left>
             {{ x.icon }}
           </v-icon>
+            {{ x.text }}
         </v-btn>
       </v-card-text>
 
@@ -37,22 +38,27 @@
     data: () => ({
       socials: [
         {
+            icon: 'mdi-gmail',
+            link: '',
+            text: 'bits@gmail.com'
+        },
+        {
             icon: 'mdi-facebook',
-            link: ''
+            link: '',
+            text: 'facebook.com/bits'
         },
         {
-            icon: 'mdi-twitter',
-            link: ''
-        },
-        {
-            icon: 'mdi-linkedin',
-            link: ''
-        },
-        {
-            icon: 'mdi-instagram',
-            link: ''
+            icon: 'mdi-phone',
+            link: '',
+            text: '+6390-6320-3071'
         },
       ],
     }),
   }
 </script>
+
+<style scoped>
+.btn{
+    pointer-events: none;
+}
+</style>

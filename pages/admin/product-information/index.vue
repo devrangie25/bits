@@ -63,6 +63,7 @@
                 <v-col cols="12" v-if="page === 2">
                     <bt-m-form-product
                         :formData="formData"
+                        :isLoading="isLoadingSubmit"
                         :action="action"
                         @cancel-product="cancelOrClearProductForm"
                         @save-product="addNewProduct"
@@ -82,6 +83,7 @@ export default {
     data: () => ({
         page: 1,
         search: "",
+        isLoadingSubmit: false,
         headers: [
             {
                 text: "Item",
@@ -158,30 +160,38 @@ export default {
 
         async updateProduct(updatedProduct) {
             try {
+                this.isLoadingSubmit = true
                 const product = await this.$store.dispatch('products/updateProduct', {...updatedProduct, product_id : updatedProduct.id})
                 if (!product.error) {
                     await this.getProducts()
                     await this.showParcelNotification({ icon : 'success', title: 'Product Successfully Updated' })
                     this.cancelOrClearProductForm()
+                    this.isLoadingSubmit = false
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                    this.isLoadingSubmit = false
                 }
             } catch (error) {
+                this.isLoadingSubmit = false
                 console.error('error', error)
             }
         },
 
         async addNewProduct(newProduct) {
             try {
+                this.isLoadingSubmit = true
                 const product = await this.$store.dispatch('products/createProduct', newProduct)
                 if (!product.error) {
                     await this.getProducts()
                     await this.showParcelNotification({ icon : 'success', title: 'Product Successfully Added' })
                     this.cancelOrClearProductForm()
+                    this.isLoadingSubmit = false
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                    this.isLoadingSubmit = false
                 }
             } catch (error) {
+                this.isLoadingSubmit = false
                 console.error('error', error)
             }
         },

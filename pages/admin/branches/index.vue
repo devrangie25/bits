@@ -63,6 +63,7 @@
                 <v-col cols="12" v-if="page === 2">
                     <bt-m-form-branch
                         :formData="formData"
+                        :isLoading="isLoadingSubmit"
                         :action="action"
                         @cancel-branch="cancelOrClearBranchForm"
                         @save-branch="addNewBranch"
@@ -81,6 +82,7 @@ export default {
     data: () => ({
         page: 1,
         search: "",
+        isLoadingSubmit: false,
         headers: [
             {
                 text: "Name",
@@ -158,31 +160,38 @@ export default {
 
         async updateBranch(updatedBranch) {
             try {
+                this.isLoadingSubmit = true
                 const branch = await this.$store.dispatch('branches/updateBranch', {...updatedBranch, branch_id : updatedBranch.id})
                 if (!branch.error) {
                     await this.getBranches()
                     await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Updated' })
                     this.cancelOrClearBranchForm()
+                    this.isLoadingSubmit = false
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
                 }
             } catch (error) {
                 console.error('error', error)
+                this.isLoadingSubmit = false
             }
         },
 
         async addNewBranch(newBranch) {
             try {
+                this.isLoadingSubmit = true
                 const branch = await this.$store.dispatch('branches/createBranch', newBranch)
                 if (!branch.error) {
                     await this.getBranches()
                     await this.showParcelNotification({ icon : 'success', title: 'Branch Successfully Added' })
                     this.cancelOrClearBranchForm()
+                    this.isLoadingSubmit = false
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                    this.isLoadingSubmit = false
                 }
             } catch (error) {
                 console.error('error', error)
+                this.isLoadingSubmit = false
             }
         },
 

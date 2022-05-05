@@ -8,7 +8,7 @@
                             :headers="headers"
                             :items="finalArr"
                             sort-by="parcel_id"
-                            sort-desc="parcel_id"
+                            sort-desc
                             class="transparent rounded-lg"
                             :search="search"
                             :key="tableKey"
@@ -77,6 +77,7 @@
                 </v-col>
                 <v-col cols="12" v-if="page === 2">
                     <bt-m-form-parcel
+                        :isLoading="isLoadingSubmit"
                         :action="formAction"
                         :formData="formData"
                         @cancel-parcel="cancelParcel"
@@ -99,6 +100,7 @@ export default {
         tableKey: 1,
         finalArr: [],
         page: 1,
+        isLoadingSubmit: false,
         search: "",
         formAction: "create",
         formData: { status: 'Order Created' },
@@ -210,16 +212,20 @@ export default {
 
         async updateParcel(udpatedParcel){
             try {
+                this.isLoadingSubmit = true
                 const parcel = await this.$store.dispatch('parcels/updateParcel', {...udpatedParcel, parcel_id : udpatedParcel.parcel_id})
                 if (!parcel.error) {
                     await this.getParcels()
                     await this.getParcelShippingDetails()
                     await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Updated' })
                     this.page = 1
+                    this.isLoadingSubmit = false
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                    this.isLoadingSubmit = false
                 }
             } catch (error) {
+                this.isLoadingSubmit = false
                 console.error('error', error)
             }
         },
@@ -236,16 +242,20 @@ export default {
 
         async addNewParcel(newParcel) {
             try {
+                this.isLoadingSubmit = true
                 const parcel = await this.$store.dispatch('parcels/createParcel', newParcel)
                 if (!parcel.error) {
                     await this.getParcels()
                     await this.getParcelShippingDetails()
                     await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Added' })
                     this.page = 1
+                    this.isLoadingSubmit = false
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
+                    this.isLoadingSubmit = false
                 }
             } catch (error) {
+                this.isLoadingSubmit = false
                 console.error('error', error)
             }
         },
