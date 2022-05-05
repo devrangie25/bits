@@ -218,7 +218,7 @@ export default {
                     await this.getParcels()
                     await this.getParcelShippingDetails()
                     await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Updated' })
-                    this.page = 1
+                    this.cancelParcel()
                     this.isLoadingSubmit = false
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
@@ -248,7 +248,7 @@ export default {
                     await this.getParcels()
                     await this.getParcelShippingDetails()
                     await this.showParcelNotification({ icon : 'success', title: 'Parcel Successfully Added' })
-                    this.page = 1
+                    this.cancelParcel()
                     this.isLoadingSubmit = false
                 } else {
                     await this.showParcelNotification({ icon : 'error', title: 'An Error Occured' })
@@ -270,7 +270,8 @@ export default {
 
         cancelParcel() {
             this.page = 1;
-            this.formData = {}
+            this.formData = { status: 'Order Created'}
+
         },
 
         saveParcel(newParcel) {
