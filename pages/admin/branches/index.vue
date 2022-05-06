@@ -91,6 +91,7 @@ export default {
             { text: "Municipality", value: "municipality" },
             { text: "Zip Code", value: "zipcode" },
             { text: "Contact #", value: "contact_number" },
+            { text: "Schedule", value: "schedule" },
             { text: "Actions", value: "actions", sortable: false },
         ],
         branches: [],

@@ -32,6 +32,7 @@
                 depressed
                 outlined
                 small
+                :disabled="parcelStatus !== 'Order Created'"
                 @click="generateReport"
             >
                 <v-icon left> mdi-file-document </v-icon>
@@ -44,6 +45,10 @@
 <script>
 export default {
     name: "pdf",
+
+    props: {
+        parcelStatus: String
+    },
 
     data() {
         return {

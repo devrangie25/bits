@@ -39,6 +39,10 @@
                 </v-container>
             </v-col>
 
+            <v-col v-if="parcelData.status === 'Unsuccessful Delivery' && isSearch" cols="12" class="my-16 d-flex justify-center">
+                <bt-m-error-pages-failed />
+            </v-col>
+
             <v-col v-if="isParcelNotFound" cols="12" class="mt-16 d-flex justify-center">
                 <div>
                     <div class="d-flex justify-center">
@@ -51,7 +55,7 @@
                 </div>
             </v-col>
 
-            <v-col v-if="isNotEmpty" cols="12">
+            <v-col v-if="isNotEmpty && parcelData.status !== 'Unsuccessful Delivery'" cols="12">
                 <v-container style="max-width: 700px">
                     <div
                         class="my-4 mb-2 title ml-10 d-flex justify-space-between"
@@ -138,7 +142,7 @@
                                     </div>
                                     <div v-if="parcelData.products.length === i + 1" class="d-flex justify-end">
                                         <span class="font-weight-bold">
-                                            Total: ₱ {{ parseFloat( totalFee ).toFixed(2) }}
+                                            Total: ₱ {{ numberWithCommas(parseFloat( totalFee ).toFixed(2)) }}
                                         </span>
                                     </div>
                                 </v-card-text>
@@ -172,16 +176,12 @@
                     </v-timeline>
                 </v-container>
             </v-col>
-            <v-col cols="12" class="mt-16 pt-16">
+            <v-col cols="12" v-if="!isSearch" class="mt-16 pt-16">
                 <div class="text-center display-1">
                     Customer Ratings
                 </div>
                 <bt-m-ratings-carousel />
             </v-col>
-
-            <!-- <v-col cols="12">
-                <bt-m-paragraphs-about color="transparent" />
-            </v-col> -->
         </v-row>
     </div>
 </template>
@@ -215,11 +215,16 @@ export default {
         referenceNumber:function(newVal) {
             if(newVal === '') {
                 this.isNotEmpty = false
+                this.isSearch = false
             }
         }
     },
 
     methods: {
+
+        numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
 
         showParcelNotification({ position, icon, title, showConfirmButton, time}){
             return this.$swal.fire({

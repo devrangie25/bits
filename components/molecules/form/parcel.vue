@@ -2,10 +2,10 @@
     <div>
         <v-card class="pa-6" rounded="lg" flat>
             <v-card-title class="d-flex justify-space-between">
-                <div>{{ action === "create" ? "New" : "Edit" }} Parcel</div>
+                <div>{{ action === "create" ? "New Parcel" : "Update Status" }} </div>
                 <div v-if="action === 'edit'">
                     <div class="d-flex">
-                        <bt-m-pdf-parcel-details>
+                        <bt-m-pdf-parcel-details :parcelStatus="parcel.status">
                             <section>
                                 <div class="date-title">
                                     <div class="title">Parcel Details</div>
@@ -100,14 +100,14 @@
                                                 >
                                                     <td>{{ product.name }}</td>
                                                     <td>{{ product.type }}</td>
-                                                    <td>{{ product.quantity }}</td>
-                                                    <td>{{ product.shipping_fee }}</td>
-                                                    <td>{{ product.total }}</td>
+                                                    <td>{{ numberWithCommas(product.quantity) }}</td>
+                                                    <td>{{ numberWithCommas(product.shipping_fee) }}</td>
+                                                    <td>{{ numberWithCommas(product.total) }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td colspan="4" class="tbl-total">
                                                         <span class="total-ph">
-                                                            Total ₱ {{  parseFloat( total(demoArr.map(val => +val.total)) ).toFixed(2) }}
+                                                            Total ₱ {{ numberWithCommas(parseFloat( total(demoArr.map(val => +val.total)) ).toFixed(2)) }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -273,13 +273,7 @@
                                     v-model="parcel.status"
                                     outlined
                                     :readonly="action === 'create'"
-                                    :items="[
-                                        'Order Created',
-                                        'In Transit',
-                                        'Picked Up',
-                                        'Dropped Off',
-                                        'Unsuccessful Delivery',
-                                    ]"
+                                    :items="statusToDisplay"
                                     label="Status"
                                     dense
                                     hide-details="auto"
@@ -344,6 +338,7 @@ export default {
         return {
             demoArr: this.formData.products ? [...this.formData.products] : [],
             parcel: { ...this.formData },
+            oldStatus: { ...this.formData },
             rules: {
                 required: (value) => !!value || "Required field",
             },
@@ -356,6 +351,10 @@ export default {
         };
     },
 
+    mounted(){
+        console.log('current status', this.parcel.status)
+    },
+
     watch: {
         "parcel.products": function (newProducts) {
             console.log("newProducts", newProducts);
@@ -363,6 +362,130 @@ export default {
     },
 
     computed: {
+
+        pickUpStatuses(){
+            if (this.oldStatus.status === 'In Transit') {
+                return [
+                    'In Transit',
+                    'Successfully Picked Up',
+                    'Unsuccessful Delivery'
+                ]
+            }
+
+            if (this.oldStatus.status === 'Successfully Picked Up') {
+                return [
+                    'Successfully Picked Up'
+                ]
+            }
+
+            if (this.oldStatus.status === 'Unsuccessful Delivery') {
+                return [
+                    'Unsuccessful Delivery'
+                ]
+            }
+
+            if (this.oldStatus.status === 'Order Created') {
+                return [
+                    'Order Created',
+                    'In Transit',
+                    'Successfully Picked Up',
+                    'Unsuccessful Delivery'
+                ]
+            }
+        },
+
+        dropOffStatuses(){
+            if (this.oldStatus.status === 'In Transit') {
+                return [
+                    'In Transit',
+                    'Successfully Dropped Off',
+                    'Unsuccessful Delivery'
+                ]
+            }
+
+            if (this.oldStatus.status === 'Successfully Dropped Off') {
+                return [
+                    'Successfully Dropped Off'
+                ]
+            }
+
+            if (this.oldStatus.status === 'Unsuccessful Delivery') {
+                return [
+                    'Unsuccessful Delivery'
+                ]
+            }
+
+            if (this.oldStatus.status === 'Order Created') {
+                return [
+                    'Order Created',
+                    'In Transit',
+                    'Successfully Dropped off',
+                    'Unsuccessful Delivery'
+                ]
+            }
+        },
+
+        doorToDoorStatuses(){
+            if (this.oldStatus.status === 'In Transit') {
+                return [
+                    'In Transit',
+                    'Successfully Delivered',
+                    'Unsuccessful Delivery'
+                ]
+            }
+
+            if (this.oldStatus.status === 'Successfully Delivered') {
+                return [
+                    'Successfully Delivered'
+                ]
+            }
+
+            if (this.oldStatus.status === 'Unsuccessful Delivery') {
+                return [
+                    'Unsuccessful Delivery'
+                ]
+            }
+
+            if (this.oldStatus.status === 'Order Created') {
+                return [
+                    'Order Created',
+                    'In Transit',
+                    'Successfully Delivered',
+                    'Unsuccessful Delivery'
+                ]
+            }
+        },
+
+        defaultStatuses(){
+            return [
+                'Order Created',
+                'In Transit',
+                'Successfully Picked up',
+                'Successfully Dropped Off',
+                'Successfully Delivered',
+                'Unsuccessful Delivery'
+            ]
+        },
+
+        statusToDisplay(){
+
+            if (this.parcel.type !== null || this.parcel.type !== '') {
+                if (this.parcel.type === 'Pick Up') {
+                    return this.pickUpStatuses
+                }
+
+                if (this.parcel.type === 'Drop Off') {
+                    return this.dropOffStatuses
+                }
+
+                if (this.parcel.type === 'Door to door') {
+                    return this.doorToDoorStatuses
+                }
+
+            } else {
+                return this.defaultStatuses
+            }
+        },
 
         isFormReadOnly(){
             if (this.action === 'edit') {
@@ -384,6 +507,10 @@ export default {
     },
 
     methods: {
+
+        numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
 
         total(arr){
             return arr.reduce((prev, next) => prev + next, 0)

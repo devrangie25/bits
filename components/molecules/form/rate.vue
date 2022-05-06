@@ -133,6 +133,7 @@ export default {
                 if (rate) {
                     console.log('rate', rate)
                     await this.showParcelNotification({ icon : 'success', title: 'Thank you for rating us.' })
+                    this.$nuxt.$emit('get-ratings', true)
                     this.reset()
                 }
             } catch (error) {

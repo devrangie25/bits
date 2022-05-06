@@ -21,6 +21,31 @@
                     />
                 </div>
             </template>
+            <template v-slot:item.total="{ item }">
+                <span>
+                    {{ numberWithCommas(item.total) }}
+                </span>
+            </template>
+            <template v-slot:body.append>
+                <tr>
+                <td colspan="3"></td>
+                <td>
+                    <span class="font-weight-bold">
+                        Total
+                    </span>
+                </td>
+                <td>
+                    <span class="font-weight-bold">
+                        ₱ {{
+                            numberWithCommas(parseFloat(demoArr.map(obj => {
+                                return +obj.total
+                            }).reduce((prev, next) => prev + next, 0)).toFixed(2))
+                        }}
+                    </span>
+                </td>
+                <td></td>
+                </tr>
+            </template>
             <template v-slot:item.actions="{ item }">
                 <v-icon
                     :disabled="formStatus === 'edit'"
@@ -91,6 +116,10 @@ export default {
     },
 
     methods: {
+
+        numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
 
         cancelEditProduct(){
             this.formData = {}

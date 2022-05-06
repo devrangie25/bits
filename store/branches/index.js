@@ -32,8 +32,16 @@ export const actions = {
             const branches = await this.$axios.$get('/branches')
             if (branches.status) {
                 commit("SET_BRANCHES", branches.data)
+                return {
+                    data: branches.data,
+                    success: true
+                }
             } else {
                 commit("SET_BRANCHES", [])
+                return {
+                    data: [],
+                    success: false
+                }
             }
         } catch (error) {
             console.error('error', error)

@@ -40,6 +40,11 @@
                                     ></v-text-field>
                                 </v-toolbar>
                             </template>
+                            <template v-slot:item.shipping_fee="{ item }">
+                                <span>
+                                    {{ numberWithCommas(item.shipping_fee) }}
+                                </span>
+                            </template>
                             <template v-slot:item.actions="{ item }">
                                 <v-icon
                                     small
@@ -106,6 +111,10 @@ export default {
     },
 
     methods: {
+
+        numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        },
 
         async deleteProduct(productToDelete){
             try {

@@ -129,10 +129,11 @@ export default {
         dateTo: '',
         dateFrom: '',
         statusItems: [
-            "Order Created",
+            'Order Created',
             'In Transit',
-            'Picked Up',
-            'Dropped Off',
+            'Successfully Picked up',
+            'Successfully Dropped Off',
+            'Successfully Delivered',
             'Unsuccessful Delivery'
         ],
         headers: [

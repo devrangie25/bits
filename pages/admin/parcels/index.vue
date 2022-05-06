@@ -115,9 +115,17 @@ export default {
             },
             { text: "Sender", value: "sender_name" },
             { text: "Recipient", value: "receiver_name" },
+            { text: "Type of Delivery", value: "type" },
             { text: "Status", value: "status" },
             { text: "Actions", value: "actions", sortable: false },
         ],
+
+            //  'Order Created',
+            //         'In Transit',
+            //         'Successfully PICKED UP',
+            //         'Successfully DROPPED OFF',
+            //         'Successfully DELIVERED',
+            //         'Unsuccessful DELIVERY'
         statusColors: [
             {
                 title: "Order Created",
@@ -128,11 +136,15 @@ export default {
                 color: '#00796B'
             },
             {
-                title: "Picked Up",
+                title: "Successfully Picked Up",
                 color: 'primary lighten-1'
             },
             {
-                title: "Dropped Off",
+                title: "Successfully Dropped Off",
+                color: '#1a73e8'
+            },
+            {
+                title: "Successfully Delivered",
                 color: '#1B5E20'
             },
             {

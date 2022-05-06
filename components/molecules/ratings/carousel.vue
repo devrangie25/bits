@@ -10,6 +10,15 @@
                 </v-card-text>
                 <div class="px-4 body-2 mb-3 font-weight-light font-italic">
                     - {{ rate.fullname }}
+                    <div class="d-flex justify-start">
+                        <v-rating
+                            v-model="rate.rate"
+                            color="warning"
+                            size="20"
+                            dense
+                            background-color="grey darken-1"
+                        ></v-rating>
+                    </div>
                 </div>
             </v-card>
         </v-slide-item>
@@ -23,6 +32,12 @@ export default {
         model: null,
         ratings: []
     }),
+
+    created() {
+        this.$nuxt.$on("get-ratings", (bol) => {
+            this.getRatings()
+        });
+    },
 
     mounted(){
         this.getRatings()

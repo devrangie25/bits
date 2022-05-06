@@ -10,7 +10,7 @@
                 v-for="(k, i) in widgets"
                 :key="i"
                 cols="12"
-                lg="4"
+                lg="3"
                 md="6"
             >
                 <v-card height="100" flat rounded="lg" class="pa-4">
@@ -75,9 +75,10 @@ export default {
     data() {
         return {
             parcels: [],
+            branches: [],
             headerData: [
                 {
-                    icon: "mdi-dropbox",
+                    icon: "mdi-package-variant-closed",
                     title: "Parcels",
                     color: '#00C897',
                 },
@@ -97,14 +98,24 @@ export default {
                     color: '#D96098'
                 },
                 {
-                    icon: "mdi-map-marker",
+                    icon: "mdi-dropbox",
                     title: "Dropped Off",
-                    color: '#D4ECDD'
+                    color: '#1a73e8'
+                },
+                {
+                    icon: "mdi-truck-check",
+                    title: "Delivered",
+                    color: '#499f6e'
                 },
                 {
                     icon: "mdi-alert-circle",
                     title: "Unsuccessful Delivery",
                     color: '#BF360C'
+                },
+                {
+                    icon: "mdi-map-marker",
+                    title: "Branches",
+                    color: '#f59d3e'
                 },
             ],
             pieData: {
@@ -114,7 +125,9 @@ export default {
                     "In Transit",
                     "Picked Up",
                     "Dropped Off",
+                    "Delivered",
                     "Unsuccessful Delivery",
+                    "Branches"
                 ],
                 datasets: [
                     {
@@ -124,9 +137,11 @@ export default {
                             "#00C897",
                             "#ff9f40",
                             "#ffcd56",
-                            "#4bc0c0",
                             "#D96098",
+                            "#D4ECDD",
+                            "#499f6e",
                             "#BF360C",
+                            "#f59d3e"
                         ],
                     },
                 ],
@@ -138,7 +153,9 @@ export default {
                     "In Transit",
                     "Picked Up",
                     "Dropped Off",
+                    "Delivered",
                     "Unsuccessful Delivery",
+                    "Branches"
                 ],
                 datasets: [
                     {
@@ -149,9 +166,11 @@ export default {
                             "#00C897",
                             "#ff9f40",
                             "#ffcd56",
-                            "#4bc0c0",
                             "#D96098",
+                            "#D4ECDD",
+                            "#499f6e",
                             "#BF360C",
+                            "#f59d3e"
                         ],
                         borderColor: "#4bc0c0",
                         borderWidth: 1,
@@ -174,17 +193,21 @@ export default {
         this.chartData.datasets[0].data.push(this.storeParcels.length)
         this.chartData.datasets[0].data.push(this.parcelStatus('Order Created'))
         this.chartData.datasets[0].data.push(this.parcelStatus('In Transit'))
-        this.chartData.datasets[0].data.push(this.parcelStatus('Picked Up'))
-        this.chartData.datasets[0].data.push(this.parcelStatus('Dropped Off'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Successfully Picked Up'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Successfully Dropped Off'))
+        this.chartData.datasets[0].data.push(this.parcelStatus('Successfully Delivered'))
         this.chartData.datasets[0].data.push(this.parcelStatus('Unsuccessful Delivery'))
+        this.chartData.datasets[0].data.push(this.storeBranches.length)
 
         // pie
         this.pieData.datasets[0].data.push(this.storeParcels.length)
         this.pieData.datasets[0].data.push(this.parcelStatus('Order Created'))
         this.pieData.datasets[0].data.push(this.parcelStatus('In Transit'))
-        this.pieData.datasets[0].data.push(this.parcelStatus('Picked Up'))
-        this.pieData.datasets[0].data.push(this.parcelStatus('Dropped Off'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Successfully Picked Up'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Successfully Dropped Off'))
+        this.pieData.datasets[0].data.push(this.parcelStatus('Successfully Delivered'))
         this.pieData.datasets[0].data.push(this.parcelStatus('Unsuccessful Delivery'))
+        this.pieData.datasets[0].data.push(this.storeBranches.length)
     },
 
     computed: {
@@ -208,6 +231,10 @@ export default {
             return this.$store.state.parcels.parcels
         },
 
+        storeBranches(){
+            return this.$store.state.branches.branches
+        },
+
         widgets(){
             return this.headerData.map(val => {
                 if (val.title === 'Parcels') {
@@ -217,11 +244,15 @@ export default {
                 } if (val.title === 'In Transit') {
                     return {...val, data: this.parcels.data?.filter(val => val.status === 'In Transit').length}
                 } if (val.title === 'Picked Up') {
-                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Picked Up').length}
+                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Successfully Picked Up').length}
                 } if (val.title === 'Dropped Off') {
-                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Dropped Off').length}
+                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Successfully Dropped Off').length}
                 } if (val.title === 'Unsuccessful Delivery') {
                     return {...val, data: this.parcels.data?.filter(val => val.status === 'Unsuccessful Delivery').length}
+                } if (val.title === 'Delivered') {
+                    return {...val, data: this.parcels.data?.filter(val => val.status === 'Successfully Delivered').length}
+                }if (val.title === 'Branches') {
+                    return {...val, data: this.storeBranches.length}
                 }else {
                     return val
                 }
